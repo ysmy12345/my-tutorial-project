@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 
-import { ForgetPasswordModal } from "./modal/ForgetPasswordModal/ForgetPasswordModal";
-import { ResetPasswordOTPModal } from "./modal/ResetPasswordOTPModal";
-import { SetNewPasswordModal } from "./modal/SetNewPasswordModal/SetNewPasswordModal";
+// import { ForgetPasswordModal } from "./modal/ForgetPasswordModal/ForgetPasswordModal";
+// import { ResetPasswordOTPModal } from "./modal/ResetPasswordOTPModal";
+// import { SetNewPasswordModal } from "./modal/SetNewPasswordModal/SetNewPasswordModal";
 import { requestForgotPassword, verifyForgotPasswordOtp, resetPassword } from "../utils/api";
 import ToastMessage from "./common/ToastMessage";
 
@@ -82,15 +82,15 @@ export function ForgetPasswordFlow({ opened, onClose }: ForgetPasswordFlowProps)
 
     return (
         <>
-            {step === 1 && (
+            {/* {step === 1 && (
                 <ForgetPasswordModal
                     opened={opened}
                     onClose={onClose} // Ensure state is cleared on close
                     onSubmit={handleRequestForgotPassword}
                 />
-            )}
+            )} */}
 
-            {step === 2 && sessionId && email && (
+            {/* {step === 2 && sessionId && email && (
                 <ResetPasswordOTPModal
                     opened={true}
                     onClose={() => resetState(true)}
@@ -102,15 +102,15 @@ export function ForgetPasswordFlow({ opened, onClose }: ForgetPasswordFlowProps)
                     onUseAnotherEmail={handleUseAnotherEmail}
                     error={error}
                 />
-            )}
+            )} */}
 
-            {step === 3 && sessionId && secret && (
+            {/* {step === 3 && sessionId && secret && (
                 <SetNewPasswordModal
                     opened={true}
                     onClose={() => resetState(true)}
                     onPasswordChanged={handleResetPassword}
                 />
-            )}
+            )} */}
 
             <ToastMessage
                 message={toastMessage}

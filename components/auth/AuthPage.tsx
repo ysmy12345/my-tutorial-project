@@ -23,13 +23,13 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import classes from "./AuthPage.module.css";
 
-import { EmailVerificationModal } from "../modal/EmailVerificationModal";
-import { CompleteProfileModal } from "../modal/CompleteProfileModal";
-import { ForgetPasswordFlow } from "../ForgetPasswordFlow";
-import { PasswordStrengthBar } from "../common/PasswordStrengthBar";
-import { TermsCheckboxGroup } from "./TermsCheckboxGroup";
-import { NoticeModal } from "../modal/NoticeModal";
-import ToastMessage from "../common/ToastMessage";
+// import { EmailVerificationModal } from "../modal/EmailVerificationModal";
+// import { CompleteProfileModal } from "../modal/CompleteProfileModal";
+// import { ForgetPasswordFlow } from "../ForgetPasswordFlow";
+// import { PasswordStrengthBar } from "../common/PasswordStrengthBar";
+// import { TermsCheckboxGroup } from "./TermsCheckboxGroup";
+// import { NoticeModal } from "../modal/NoticeModal";
+// import ToastMessage from "../common/ToastMessage";
 
 import {
   validateEmail,
@@ -203,7 +203,7 @@ export function AuthPage() {
 
   return (
     <Container size="sm">
-      <Box className={classes.centerContainer}>
+      {/* <Box className={classes.centerContainer}>
         <Stack>
           <Center>
             <SegmentedControl
@@ -345,7 +345,7 @@ export function AuthPage() {
                 )}
               />
 
-              {/* Password strength indicator (only show in signup mode) */}
+              Password strength indicator (only show in signup mode)
               {authMode === "signup" &&
                 form.values.signupPassword.length > 0 && (
                   <PasswordStrengthBar
@@ -386,9 +386,9 @@ export function AuthPage() {
             </Stack>
           </form>
         </Stack>
-      </Box>
+      </Box> */}
 
-      <EmailVerificationModal
+      {/* <EmailVerificationModal
         opened={verificationModalOpened}
         onClose={setVerificationModalOpened.close}
         email={form.values.signupEmail}
@@ -399,14 +399,14 @@ export function AuthPage() {
         title={t('verifyEmail')}
         description={t('placeHolderemail')}
         verificationError={verificationError}
-      />
+      /> */}
 
-      <CompleteProfileModal
+      {/* <CompleteProfileModal
         opened={completeProfileModalOpened}
         onClose={setCompleteProfileModalOpened.close}
-      />
+      /> */}
 
-      <ForgetPasswordFlow
+      {/* <ForgetPasswordFlow
         opened={forgotPasswordOpen}
         onClose={() => setForgotPasswordOpen(false)}
       />
@@ -416,14 +416,14 @@ export function AuthPage() {
         onClose={() => setNoticeModalOpen(false)}
         title={t('accdeletedNotice')}
         content={t('delNoticeDes')?.replace(/<br\s*\/?>/gi, '\n')}
-      />
+      /> */}
 
-      <ToastMessage
+      {/* <ToastMessage
         message={FailToastMessage}
         visible={showFailToast}
         onClose={() => setShowFailToast(false)}
         isSuccess={false}
-      />
+      /> */}
     </Container>
   );
 }
