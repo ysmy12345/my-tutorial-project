@@ -1,0 +1,539 @@
+{
+    "common": {
+        "title": "ReadyServer",
+        "description": "Reliable and Trusted Hosting Solutions!",
+        "placeholder": "Enter {label}",
+        "saveChangesButton": "Save Changes",
+        "confirmButton": "Confirm",
+        "cancelButton": "Cancel",
+        "backToTop": "Back to Top",
+        "end": "- End -"
+    },
+    "auth": {
+        "login": "Log in",
+        "signup": "Sign up",
+        "notYou": "Not you?",
+        "welcomeBack": "Welcome back,",
+        "emailPlaceholderLogin": "Enter your login email",
+        "emailPlaceholderSignup": "Email address",
+        "passwordPlaceholder": "Password",
+        "forgotPassword": "Forgot Password?",
+        "sendOtpFailed": "Send OTP failed",
+        "invalidCredentials": "Invalid credentials",
+        "verifyOtpFailed": "Verify OTP failed",
+        "invalidOtp": "Invalid OTP",
+        "resendOtpFailed": "Resend OTP failed",
+        "emailVerificationTitle": "Email Verification",
+        "emailVerificationDesc": "We've sent a verification code to your email. Please enter the code to proceed.",
+        "vpsServiceLaunchAnnouncement": "Starting from the 1st of January 2025, we have officially rolled out the VPS service, making it available for public beta testing to allow users to explore its features.",
+        "smtpPortsRestrictionNotice": "You are aware that SMTP ports 25, 465, and 587 are currently restricted on the VPS service.",
+        "eligibilityCountriesNotice": "You must be a resident of one of the following countries or regions in order to be eligible: Singapore, Australia, Brunei, Cambodia, China, Hong Kong, Indonesia, Japan, South Korea, Laos, Macao, Malaysia, New Zealand, the Philippines, Taiwan, Thailand, Timor-Leste, or Vietnam.",
+        "agreeToTermsText": "You must agree to the terms",
+        "privacyPolicy": "Privacy Policy",
+        "termsOfUse": "Terms of Use"
+    },
+    "forgotPassword": {
+        "changePassswordSuccess": "Change password successfully!"
+    },
+    "tab": {
+        "home": "Home",
+        "messages": "Messages",
+        "server": "Server",
+        "profile": "Profile"
+    },
+    "home": {
+        "notifications": "Notifications",
+        "wallet": "Wallet",
+        "points": "points",
+        "viewBalanceDetail": "View points balance detail",
+        "topUp": "Top up",
+        "createVPS": "Create VPS",
+        "transaction": "Transaction",
+        "activity": "Activity",
+        "eligibilityCheckError": "Failed to check eligibility. Please try again later.",
+        "serverSection": {
+            "title": "My Server",
+            "noServerMessage": "You have no server yet.\nLet's create one!"
+        },
+        "noTopUpModal": {
+            "title": "Maximum Top-Up Limit Reached",
+            "message": "You've reached the maximum top-up amount allowed. Please contact support for assistance.",
+            "gotItButton": "Got it",
+            "imageAlt": "Top Up Not Eligible"
+        },
+        "maximumServerReachedModal": {
+            "title": "Maximum server reached",
+            "message": "You've reached the maximum number of servers allowed. For assistance or inquiries, please contact support.",
+            "gotItButton": "Got it",
+            "imageAlt": "Maximum Server Reached"
+        }
+    },
+    "topUp": {
+        "title": "Top Up",
+        "selectValue": "Top up with standard currency",
+        "selectValueSub": "Credit Card, Alipay and more.",
+        "points": "{point} points",
+        "checkOut": "Check Out",
+        "topUpCrypto": "Top up with crypto currency",
+        "btcEtc": "Bitcoin, Ethereum, and more.",
+        "noTopUpModal": {
+            "title": "Maximum Top-Up Limit Reached",
+            "message": "You've reached the maximum top-up amount allowed. Please contact support for assistance.",
+            "gotItButton": "Got it",
+            "imageAlt": "Top Up Not Eligible"
+        },
+        "topUpSuccessModal": {
+            "title": "Top Up Success!",
+            "message": "Thank you for the top up. You may view the transaction detail under 'Transaction History' and balance detail under 'Points History'",
+            "imageAlt": "Top Up Success",
+            "positiveButton": "View Transaction History",
+            "negativeButton": "Close"
+        },
+        "paymentFailedModal": {
+            "title": "Payment unsuccessful",
+            "message": "Please retry payment or select a different payment method.",
+            "imageAlt": "Top Up Failed",
+            "positiveButton": "Retry payment",
+            "negativeButton": "Back to check out"
+        }
+    },
+    "activity": {
+        "pageTitle": "Activity",
+        "searchPlaceholder": "Search",
+        "clearSearch": "Clear search",
+        "noSearchResultTitle": "Try a different search",
+        "noSearchResultDescription": "There is no record of the search.\nPlease try with a different search key."
+    },
+    "points": {
+        "all": "All",
+        "topUp": "Top Up",
+        "dailyUsage": "Daily Usage",
+        "launchServer": "New VPS Creation",
+        "noTransaction": "No Transaction Found",
+        "noRecord": "There is no record of transaction history.\nPlease try again with a different search key.",
+        "pointsHistory": "Points History",
+        "dateFilter": {
+            "title": "Date Filter",
+            "anyDate": "Any date",
+            "thisWeek": "This week",
+            "last14Days": "Last 14 days",
+            "last30Days": "Last 30 days",
+            "last60Days": "Last 60 days",
+            "reset": "Reset",
+            "apply": "Apply"
+        },
+        "pageTitle": "Points Details",
+        "noTransactionDetails": "No transaction details available.",
+        "transactionId": "Transaction ID",
+        "dateTime": "Date & Time",
+        "totalPointsCharged": "Total Points Charged:",
+        "points": "{point} points"
+    },
+    "serverList": {
+        "title": "My VPS List",
+        "noActiveServer": "No Active Server",
+        "noActiveServerDescription": "There is no record of active server.\nGo to Home & create server.",
+        "activityButton": "Activity"
+    },
+    "notification": {
+        "pageTitle": "Notification",
+        "last7days": "Last 7 Days",
+        "olderMessages": "Older Messages",
+        "readAll": "Read All",
+        "empty": "No notification found.",
+        "back": "Back"
+    },
+    "createVps": {
+        "vpsDetail": "VPS detail",
+        "serverLocation": "Server Location",
+        "note": "* No excess usage charge, ensure customers have worry free usage. Fair use policy applied.",
+        "details": {
+            "cpu": "{cpuCoreNo} vCPU Core",
+            "ram": "{ram} RAM",
+            "bandwidth": "{bandwidth} Data Transfer"
+        },
+        "pageTitle": "Create VPS",
+        "configureServer": "Configure server",
+        "setupFee": "{points} points",
+        "hourlyFee": "{points} point per hour",
+        "maximumServerReachedModal": {
+            "title": "Maximum server reached",
+            "message": "You've reached the maximum number of servers allowed. For assistance or inquiries, please contact support.",
+            "gotItButton": "Got it",
+            "imageAlt": "Maximum Server Reached"
+        }
+    },
+    "balanceBar": {
+        "balanceLabel": "Balance: {balance} points",
+        "topup": "Top Up"
+    },
+    "server": {
+        "pageTitle": "My VPS",
+        "totalVps": "Total No. of VPS",
+        "upcomingCharges": {
+            "title": "Total Upcoming Charges",
+            "rateLabel": "Rate {points} points per hour",
+            "totalLabel": "{points} points"
+        }
+    },
+    "serverDetails": {
+        "edit": "Edit",
+        "serverId": "Server ID: {vpsId}",
+        "upcomingCharges": "Upcoming Charges",
+        "control": {
+            "powerStatus": "Power Status",
+            "reboot": "Reboot",
+            "shutdown": "Shutdown",
+            "start": "Start",
+            "rescueMode": "Rescue Mode",
+            "consoleAccess": "Console Access"
+        },
+        "remoteAccess": "Remote Access",
+        "ipAddress": "IP Address",
+        "vpsUsername": "VPS Username",
+        "vpsPassword": "VPS OS Password",
+        "copy": "Copy",
+        "copied": "Copied",
+        "consoleAccess": "Console Access",
+        "consoleUrl": "Console URL",
+        "consolePassword": "Console Password",
+        "accessCode": "Access Code",
+        "specsAndFeatures": "Specs & Features",
+        "diskSize": "NVMe Disk Space",
+        "diskSizeTemplate": "{diskSize}GB Disk Space",
+        "cpuCore": "CPU Core",
+        "cpuCoreTemplate": "{core} Core",
+        "memory": "Memory",
+        "memoryTemplate": "{memory}GB RAM",
+        "os": "Operating System",
+        "terminateServer": {
+            "link": "Terminate Server",
+            "title": "Terminating server?",
+            "description": "You are about to terminate your server. This action is irreversible and will result in the loss of all data and configurations associated with this server. Please ensure you have backed up any important information before proceeding."
+        },
+        "terminatedServer": {
+            "title": "Terminating Server",
+            "description": "We're processing your request to terminate the server (Server ID: {serverId}). You'll receive a notification in your inbox once the process is complete. Thank you for your patience!",
+            "gotItButton": "Got it"
+        },
+        "powerOn": {
+            "title": "Power on server?",
+            "description": "Do you want to power on the server? It may take a few moments for all services to become available."
+        },
+        "powerOff": {
+            "title": "Power off server?",
+            "description": "Are you sure you want to power off the server? This will stop all services and disconnect active users."
+        },
+        "reboot": {
+            "title": "Reboot server?",
+            "description": "This will cause a brief downtime, and any unsaved data may be lost. Please save your work before proceeding."
+        },
+        "start": {
+            "title": "Power on server?",
+            "description": "Do you want to power on the server? It may take a few moments for all services to become available."
+        },
+        "stop": {
+            "title": "Graceful shutdown server?",
+            "description": "The server will shut down gracefully. You'll need to start it again to restore services."
+        },
+        "disableRescueMode": {
+            "title": "Disable rescue mode?",
+            "description": "Disabling Rescue Mode will power off your server. You will need to manually power it back on to restore service. Please confirm to proceed."
+        },
+        "enableRescueMode": {
+            "title": "Enable rescue mode?",
+            "description": "This action allows for recovery and troubleshooting but may effect your server's current state."
+        },
+        "disableConsoleAccess": {
+            "title": "Disable console access?",
+            "description": "Disabling Console Access will restrict direct server management through the console. Please confirm to proceed."
+        },
+        "enableConsoleAccess": {
+            "title": "Enable console access?",
+            "description": "This action provides you with low-level control and can affact the server's performance and security. Please confirm to proceed."
+        },
+        "contactUs": "Contact Us",
+        "editServerName": {
+            "title": "Edit server label name",
+            "label": "Your Server Label Name"
+        },
+        "emailVerification": {
+            "title": "Verify to Terminate Server",
+            "description": "A One-Time Password (OTP) has been sent to your email address {email}. If you don't see it in your inbox, please check your junk or spam folder."
+        }
+    },
+    "serverRedirect": {
+        "heading": "New Server Created",
+        "message1": "Your server has been successfully created.",
+        "message2": "You will be redirecting to your server in a moment...",
+        "fallbackText": "Loading..."
+    },
+    "transaction": {
+        "pageTitle": "Transaction History",
+        "emptyStateTitle": "No Transaction Record",
+        "emptyStateDescription": "There is no record of the search.\nPlease try with a different search key."
+    },
+    "support": {
+        "pageTitle": "Support",
+        "loadingMessages": "Loading messages...",
+        "inquiryPrefix": "Inquiry for [{id}]:",
+        "welcomeMessage": "Welcome! Feel free to leave us a message, and we'll get back to you as soon as we can.",
+        "placeholder": "Type a message..."
+    },
+    "profile": {
+        "greeting": "Hi, {name}",
+        "settings": {
+            "title": "Setting",
+            "accountInformation": "Account Information",
+            "loginSecurity": "Login & Security",
+            "notificationSetting": "Notification Setting",
+            "paymentSetting": "Payment Setting"
+        },
+        "transactions": {
+            "title": "Transaction & Help Center",
+            "transactionHistory": "Transaction History",
+            "pointsHistory": "Points History",
+            "privacyPolicy": "Privacy Policy",
+            "termsOfUse": "Terms of Use",
+            "serviceLevelAgreement":"Service Level Agreement",
+            "logout": "Log out"
+        }
+    },
+    "accountInformation": {
+        "pageTitle": "Account Information",
+        "tipsMessage": "Tips: Account information will be used for billing purposes.",
+        "personalInfo": "Personal Information",
+        "yourName": "Your name",
+        "yourAddress": "Your address",
+        "companyInfo": "Company Information",
+        "yourCompanyName": "Your company name",
+        "yourCompanyAddress": "Your company address",
+        "edit": "Edit",
+        "deleteAccount": "Delete Account",
+        "successMessage": "Information updated!",
+        "deleteAccountSuccess": "Account deleted!"
+    },
+    "loginSecurity": {
+        "pageTitle": "Login & Security",
+        "loginCredential": "Log In Credential",
+        "emailAddress": "Email Address",
+        "password": "Password",
+        "updateEmailAddress": "Update email address",
+        "newEmailAddress": "New Email Address",
+        "updatePassword": "Update password",
+        "passwordUpdateDescription": "You're all set! Please enter your new password to continue.",
+        "confirmButtonText": "Next",
+        "biometricLogin": "Allow biometric log in",
+        "emailUpdated": "Email updated!",
+        "passwordUpdated": "Password updated!",
+        "otpSent": "A One-Time Password (OTP) has been sent to your new email address. If you don't see it in your inbox, please check your junk or spam folder.",
+        "tipsBiometric": "Tips: Allow biometric log in for better security and faster log in."
+    },
+    "notificationSetting": {
+        "pageTitle": "Notification Setting",
+        "billingPayments": "Billing & Payments",
+        "securityAccess": "Security & Access",
+        "insufficientPointReminder": {
+            "label": "Zero/Negative Points Alert",
+            "title": "Zero/Negative points alert",
+            "description": "Notify me if my point balance is insufficient for next statement."
+        },
+        "loginAttempt": {
+            "label": "Log In Attempts",
+            "title": "Log in attempts",
+            "description": "Notify me when successful login from different devices."
+        },
+        "unAuthorisedAccessAlert": {
+            "label": "Unauthorized Access Alerts",
+            "title": "Unauthorized access alerts",
+            "description": "Notify me when 3 consecutive log in failure"
+        },
+        "notificationUpdated": "Notification settings have been updated!",
+        "pushOnly": "Push only",
+        "noNotification": "No Notification"
+    },
+    "paymentSetting": {
+        "pageTitle": "Payment Setting",
+        "paymentMethodSection": "Payment Method",
+        "cardExpiry": "Expires: {expMonth}/{expYear}",
+        "defaultBadge": "Default",
+        "addCardText": "Add a Credit/Debit Card",
+        "addCardSuccess": "Payment card added successfully!"
+    },
+    "cardDetails": {
+        "pageTitle": "Card Details",
+        "defaultBadge": "Default",
+        "cardNumber": "Card Number",
+        "expiryDate": "Expiry Date",
+        "deleteCard": "Delete Card",
+        "setAsDefault": "Set As Default",
+        "deleteCardTitle": "Delete card",
+        "deleteCardDescription": "After deleting this card, you will no longer be able to make transactions with it.",
+        "deleteCardConfirmButton": "Delete",
+        "cardDeletedSuccess": "Payment card deleted!",
+        "setDefaultSuccess": "Set as default payment successfully!"
+    },
+    "verifyModal": {
+        "title": "Verify it's you",
+        "greeting": "Hi,",
+        "passwordLabel": "Password",
+        "passwordPlaceholder": "Enter password",
+        "proceedButton": "Proceed",
+        "forgotPassword": "Forgot Password"
+    },
+    "editNotificationModal": {
+        "title": "Edit Notification Settings",
+        "description": "Manage your notification preferences below.",
+        "pushNotification": "Push Notification",
+        "emailNotification": "Email Notification",
+        "saveChangesButton": "Save Changes"
+    },
+    "editEmailModal": {
+        "currentEmail": "Current Email Address",
+        "placeholder": "Enter {label}",
+        "requestOTPButton": "Request OTP"
+    },
+    "editAddressModal": {
+        "countryRegion": "Country/Region",
+        "selectCountryPlaceholder": "Select country or region",
+        "postalCodeLabel": "Postal/Zip Code",
+        "postalCodePlaceholder": "Enter postal or zip code",
+        "addressPlaceholder": "Enter {label}",
+        "acknowledgeText": "I acknowledge that the information provided is correct and that I understand the local tax exemption laws applicable to my selected country.",
+        "saveChangesButton": "Save Changes"
+    },
+    "deleteAccountModal": {
+        "title": "Delete Account?",
+        "message": "By deleting your account, any remaining points will be forfeited and are non-refundable. Would you like to proceed?",
+        "confirm": "Yes, I want to delete.",
+        "cancel": "Cancel"
+    },
+    "changeServerLocation": {
+        "title": "Select Server Location",
+        "saveButton": "Save Changes"
+    },
+    "vpsDetailsModal": {
+        "title": "VPS Details",
+        "cpu": "{cpu} vCPU Core",
+        "ram": "{ram} RAM",
+        "hardDisk": "{size} {type}",
+        "bandwidth": "{bandwidth} Data Transfer",
+        "note": "* No need to worry about excess usage charge, ensure customers have worry-free usage. Fair use policy applied.",
+        "okayButton": "Okay"
+    },
+    "forgotPasswordModal": {
+        "forgotPassword": "Forgot Password",
+        "otpInfo": "We will send you a temporary One Time Password (OTP) to reset the password.",
+        "emailPlaceholder": "Enter your registered email",
+        "resetPassword": "Reset Password"
+    },
+    "resetPasswordOtpModal": {
+        "title": "Enter OTP",
+        "description": "A One-Time Password (OTP) has been sent to your email address with {email}. If you don’t see it in your inbox, please check your junk or spam folder.",
+        "pinInputError": "Invalid OTP. Please try again.",
+        "resendText": "Didn't receive the code? Resend in {countdown}s",
+        "resendButton": "Resend code",
+        "useAnotherEmail": "Use a Different Email"
+    },
+    "setNewPasswordModal": {
+        "title": "Set New Password",
+        "description": "Please create a new password for your account. Make sure it's strong and secure.",
+        "passwordPlaceholder": "New password",
+        "confirmPasswordPlaceholder": "Re-enter new password",
+        "confirmButtonText": "Confirm"
+    },
+    "selectOSModal": {
+        "title": "Select Operating System",
+        "searchPlaceholder": "Search",
+        "byolTooltip": "BYOL (Bring Your Own License) applies.",
+        "confirmButton": "Confirm"
+    },
+    "configureServerModal": {
+        "title": "Configure VPS",
+        "vpsDetails": "VPS Detail",
+        "serverLocation": "Server Location",
+        "selectOSAndEditName": "Select OS & Edit Server Name",
+        "operatingSystem": "Operating System",
+        "serverLabelName": "Your Server Label Name",
+        "enterServerName": "Enter server name",
+        "subtotal": "Subtotal:",
+        "nextHourCharge": "Next & subsequent hour {point} points",
+        "totalChargeable": "Total chargeable:",
+        "chargeablePoints": "{point} points",
+        "createServer": "Create Server"
+    },
+    "emailVerificationModal": {
+        "title": "Email Verification",
+        "didNotReceiveCode": "Didn't receive the code? Resend in {countdown}s",
+        "resendCode": "Resend code"
+    },
+    "activityFilterModal": {
+        "filterBy": "Filter by",
+        "dateRange": "Date Range",
+        "last24Hours": "Last 24 Hours",
+        "last30Days": "Last 30 Days",
+        "last7Days": "Last 7 Days",
+        "activityStatus": "Activity Status",
+        "activityType": "Activity Type",
+        "reset": "Reset",
+        "apply": "Apply"
+    },
+    "completeProfileModal": {
+        "title": "Complete your profile setting",
+        "description": "You are ONE step away from completing your sign up! To enhance your user experience, let us know you better.",
+        "placeholder": "Your name",
+        "saveButton": "Save"
+    },
+    "checkoutModal": {
+        "title": "Checkout",
+        "topUp": "Top Up",
+        "totalUpValue": "Total up value: {points} points",
+        "subtotal": "Subtotal:",
+        "billingDetails": "Fill in billing detail",
+        "forPersonal": "For Personal",
+        "forCompany": "For Company",
+        "yourName": "Your name",
+        "yourAddress": "Your address",
+        "yourCompanyName": "Your company name",
+        "yourCompanyAddress": "Your company address",
+        "selectPaymentMethod": "Select a payment method",
+        "creditDebitCard": "Credit/Debit Card",
+        "addCardText": "Add a Credit/Debit Card",
+        "expires": "Expires",
+        "default": "Default",
+        "edit": "Edit",
+        "viewDetail": "View Detail",
+        "sgGst": "SG GST @ {tax}%:",
+        "totalPayable": "Total Payable:",
+        "confirmPayment": "Confirm Payment",
+        "fillInAllRequired": "Please fill in all required fields.",
+        "applePayBrowserNotSupported": "ApplePay is not supported in this browser",
+        "applePayDeviceNotSupported": "Oops! Looks like your device doesn't support Apple Pay.",
+        "topUpSuccessTitle": "Top Up Success!",
+        "topUpSuccessDescription": "Thank you for the top up. You may view the transaction detail under 'Transaction History' and balance detail under 'Points History'",
+        "topUpSuccessImageAlt": "Top Up Success",
+        "viewTransactionHistory": "View Transaction History",
+        "close": "Close",
+        "redirecting": "Redirecting to payment page..."
+    },
+    "transactionDetail": {
+        "title": "Transaction Detail",
+        "invoiceNo": "Invoice No.",
+        "dateTime": "Date & Time",
+        "paymentMethod": "Payment Method",
+        "paidBy": "Paid By",
+        "subtotal": "Subtotal",
+        "gst": "SG GST @ {tax}%",
+        "totalPaid": "Total Paid: {amount}",
+        "pointsEarned": "Points Earned",
+        "thankYouMessage": "Thank you for your top up",
+        "viewInvoiceButton": "View Invoice"
+    },
+    "validation": {
+        "emailInvalid": "Please enter a valid email address",
+        "passwordLength": "Password must be 8-12 characters long",
+        "passwordComplexity": "Password must include numbers, lowercase, uppercase, and special characters (!,@,#,$,*,&)",
+        "passwordMismatch": "Passwords do not match",
+        "fieldRequired": "This field is required"
+    }
+}

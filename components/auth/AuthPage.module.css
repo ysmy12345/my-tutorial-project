@@ -1,0 +1,96 @@
+.root {
+    background-color: var(--mantine-color-blue-0);
+    box-shadow: var(--mantine-shadow-md);
+    border: 1px solid light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-4));
+  }
+  
+  .indicator {
+    background-image: linear-gradient(
+      to right,
+      var(--mantine-color-blue-9),
+      var(--mantine-color-blue-9)
+    );
+  }
+  
+  .control {
+    &::before {
+      display: none;
+    }
+  }
+  
+  .label {
+    &,
+    &:hover {
+      &[data-active] {
+        color: var(--mantine-color-white);
+      }
+    }
+  }
+
+.centerContainer {
+  justify-content: center;
+  width: 100%;
+}
+
+.inputField {
+  height: 50px;
+  box-shadow: var(--mantine-shadow-sm);
+  border: 1px solid var(--mantine-color-gray-2);
+}
+
+.authButton {
+  background-color: var(--mantine-color-blue-9);
+  height: 50px;
+  margin-top: 10px;
+  color: var(--mantine-color-white);
+}
+
+.authButton:hover {
+  background-color: var(--mantine-color-blue-8);
+}
+
+.authButton[data-disabled] {
+  background-color: var(--mantine-color-blue-2);
+  color: var(--mantine-color-white);
+  opacity: 1;
+}
+
+.forgotPassword {
+  color: var(--mantine-color-blue-9);
+}
+
+.termsLink {
+  color: var(--mantine-color-blue-9);
+}
+
+.segmentedControl {
+  width: 500px;
+}
+
+.welcomeBox {
+  background-color: var(--mantine-color-blue-0);
+  padding: var(--mantine-spacing-md);
+  border-radius: var(--mantine-radius-md);
+  border: 1px solid var(--mantine-color-blue-2);
+  margin-bottom: var(--mantine-spacing-xs);
+}
+.notYouLink {
+  color: var(--mantine-color-blue-9);
+  font-size: 14px;
+}
+
+.notYouLink:hover {
+  text-decoration: none;
+  color: var(--mantine-color-blue-9);
+}
+
+.inputErrorWrapper {
+  border: 1px solid var(--mantine-color-red-9);
+  border-radius: var(--mantine-radius-xl);
+}
+
+.inputError {
+  color: var(--mantine-color-red-9);
+  font-size: var(--mantine-font-size-sm);
+  margin-top: 5px;
+}
