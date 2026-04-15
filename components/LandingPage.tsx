@@ -1,5 +1,6 @@
 "use client";
 import { Group, Stack, Text, Table, ScrollArea } from '@mantine/core';
+import { useState } from 'react';
 
 const stocks = [
     { name: '5ER', price: '0.275', nta: '0.090', percent: '+5.80%', chg: '+0.015' },
@@ -11,8 +12,27 @@ const stocks = [
 ];
 
 export const LandingPage = () =>{
+    const [sortBy, setSortBy] = useState<string | null>(null);
+    const [reversed, setReversed] = useState(false);
 
-  return(
+    const sortedData = [...stocks].sort((a, b) => {
+        if (!sortBy) return 0;
+
+        const valA = a[sortBy as keyof typeof a];
+        const valB = b[sortBy as keyof typeof b];
+
+        if (reversed) {
+            return String(valB).localeCompare(String(valA), undefined, { numeric: true });
+        }
+        return String(valA).localeCompare(String(valB), undefined, { numeric: true });
+    });
+
+    const handleSort = (field: string) => {
+        setReversed(sortBy === field ? !reversed : false);
+        setSortBy(field);
+    };
+
+    return(
     <>
     {/* ScrollArea 保证在手机screen上，如果form 太宽，可以左右scroll，不会content 爆 */}
     <ScrollArea>
@@ -20,25 +40,39 @@ export const LandingPage = () =>{
         <Table.Thead>
           <Table.Tr>
 
-            <Table.Th>
-              <Text fw={700} c="dimmed" size="xs">STOCK ↕</Text>
+            <Table.Th style={{cursor: 'pointer' }} onClick={() => handleSort('name')}>
+                <Group gap={4}>
+                    <Text fw={700} c={sortBy === 'name' ? 'white' : 'dimmed'} size="xs">
+                        STOCK {sortBy === 'name' ? (reversed ? '↓' : '↑') : '↕'}
+                    </Text>
+                </Group>
             </Table.Th>     
 
-            <Table.Th style={{textAlign: 'right'}}>
-              <Text fw={700} c="dimmed" size="xs">PRICE ↕</Text>
-              <Text c="dimmed" size="10px">NTA ↕</Text>
+            <Table.Th style={{ textAlign: 'right' }}>
+              <Text fw={700} size="xs" style={{ cursor: 'pointer' }} c={sortBy === 'price' ? 'white' : 'dimmed'} onClick={() => handleSort('price')}>
+                PRICE {sortBy === 'price' ? (reversed ? '↓' : '↑') : '↕'}
+              </Text>
+
+              <Text size="10px" style={{ cursor: 'pointer' }} c={sortBy === 'nta' ? 'white' : 'dimmed'} onClick={() => handleSort('nta')}>
+                NTA {sortBy === 'nta' ? (reversed ? '↓' : '↑') : '↕'}
+              </Text>
             </Table.Th>
 
             <Table.Th style={{ textAlign: 'right' }}>
-              <Text fw={700} c="dimmed" size="xs">C(%) ↕</Text>
-              <Text c="dimmed" size="10px">CHG ↕</Text>
+              <Text fw={700} size="xs" style={{ cursor: 'pointer' }} c={sortBy === 'percent' ? 'white' : 'dimmed'} onClick={() => handleSort('percent')}>
+                C(%) {sortBy === 'percent' ? (reversed ? '↓' : '↑') : '↕'}
+              </Text>
+
+              <Text size="10px" style={{ cursor: 'pointer' }} c={sortBy === 'chg' ? 'white' : 'dimmed'} onClick={() => handleSort('chg')}>
+                CHG {sortBy === 'chg' ? (reversed ? '↓' : '↑') : '↕'}
+              </Text>
             </Table.Th>
 
           </Table.Tr>
         </Table.Thead>
 
         <Table.Tbody>
-          {stocks.map((item, index) => (
+          {sortedData.map((item, index) => (
             <Table.Tr key={index}>
               <Table.Td>
                 <Text fw={700} c="white">{item.name}</Text>
