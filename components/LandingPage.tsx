@@ -48,6 +48,7 @@ const StockTable = ({ title, refreshKey }: { title: string; refreshKey: number }
 
     const handleRowClick = (item: typeof stocks[0]) => {
         const params = new URLSearchParams({
+            name: item.name,
             price: item.price,
             nta: item.nta,
             percent: item.percent,
