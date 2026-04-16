@@ -1,6 +1,7 @@
 "use client";
 import { Group, Stack, Text, Table, ScrollArea, SimpleGrid, Box, Button } from '@mantine/core';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 const stocks = [
     { name: '5ER', price: '0.275', nta: '0.090', percent: '+5.80%', chg: '+0.015' },
@@ -8,7 +9,10 @@ const stocks = [
     { name: 'SUNMED', price: '1.870', nta: '0.220', percent: '+0.50%', chg: '+0.010' },
     { name: 'ZETRIX', price: '0.785', nta: '48.020', percent: '+1.90%', chg: '+0.015' },
     { name: 'IOIPG', price: '3.880', nta: '4.530', percent: '+2.90%', chg: '+0.110' },
-    { name: 'IJM', price: '2.300', nta: '2.890', percent: '+1.30%', chg: '+0.030' },
+    { name: 'CIMB', price: '7.500', nta: '6.520', percent: '-0.70%', chg: '-0.050' },
+    { name: 'GAMUDA', price: '4.130', nta: '2.130', percent: '+1.50%', chg: '+0.060' },
+    { name: 'PBBANK', price: '4.600', nta: '3.103', percent: '-0.90%', chg: '-0.040' },
+    { name: 'TENAGA', price: '14.140', nta: '8.713', percent: '-1.30%', chg: '-0.180' },
 ];
 
 type StockKey = keyof typeof stocks[0];
@@ -20,6 +24,7 @@ const TABLE_CONFIG = [
 ];
 
 const StockTable = ({ title, refreshKey }: { title: string; refreshKey: number }) => {
+    const router = useRouter();
     const [sortBy, setSortBy] = useState<StockKey | null>(null);
     const [reversed, setReversed] = useState(false);
 
@@ -41,6 +46,16 @@ const StockTable = ({ title, refreshKey }: { title: string; refreshKey: number }
     const Icon = (field: StockKey) => sortBy === field ? (reversed ? '↓' : '↑') : '↕';
     const ptr: React.CSSProperties = { cursor: 'pointer' };
 
+    const handleRowClick = (item: typeof stocks[0]) => {
+        const params = new URLSearchParams({
+            price: item.price,
+            nta: item.nta,
+            percent: item.percent,
+            chg: item.chg,
+        }).toString();
+        router.push(`/stock/${item.name}?${params}`);
+    };
+
     return (
         <Box bg="#0b1622" style={{ borderRadius: 8, overflow: 'hidden', minWidth: 0 }}>
             <Box px="md" py={6} bg="#0f1e30" style={{ borderBottom: '1px solid #1a2e45' }}>
@@ -55,46 +70,59 @@ const StockTable = ({ title, refreshKey }: { title: string; refreshKey: number }
                                     STOCK {Icon('name')}
                                 </Text>
                             </Table.Th>
+
                             <Table.Th style={{ textAlign: 'right' }}>
                                 <Stack gap={0} align="flex-end">
                                     <Text fw={700} size="xs" style={ptr} c={sortBy === 'price' ? 'white' : 'dimmed'} onClick={() => handleSort('price')}>
                                         PRICE {Icon('price')}
                                     </Text>
+
                                     <Text size="10px" style={ptr} c={sortBy === 'nta' ? 'white' : 'dimmed'} onClick={() => handleSort('nta')}>
                                         NTA {Icon('nta')}
                                     </Text>
                                 </Stack>
                             </Table.Th>
+
                             <Table.Th style={{ textAlign: 'right' }}>
                                 <Stack gap={0} align="flex-end">
                                     <Text fw={700} size="xs" style={ptr} c={sortBy === 'percent' ? 'white' : 'dimmed'} onClick={() => handleSort('percent')}>
                                         C(%) {Icon('percent')}
                                     </Text>
+
                                     <Text size="10px" style={ptr} c={sortBy === 'chg' ? 'white' : 'dimmed'} onClick={() => handleSort('chg')}>
                                         CHG {Icon('chg')}
                                     </Text>
                                 </Stack>
                             </Table.Th>
+
                         </Table.Tr>
                     </Table.Thead>
+
                     <Table.Tbody>
-                        {sortedData.map((item, i) => (
-                            <Table.Tr key={i}>
-                                <Table.Td><Text fw={700} c="white">{item.name}</Text></Table.Td>
-                                <Table.Td style={{ textAlign: 'right' }}>
-                                    <Stack gap={0} align="flex-end">
-                                        <Text fw={600} size="sm" c="white">{item.price}</Text>
-                                        <Text c="dimmed" size="xs">{item.nta}</Text>
-                                    </Stack>
-                                </Table.Td>
-                                <Table.Td style={{ textAlign: 'right' }}>
-                                    <Stack gap={0} align="flex-end">
-                                        <Text c="green" fw={600} size="sm">{item.percent}</Text>
-                                        <Text c="green" size="xs">{item.chg}</Text>
-                                    </Stack>
-                                </Table.Td>
-                            </Table.Tr>
-                        ))}
+                        {sortedData.map((item, i) => {
+                            const isNeg = item.percent.startsWith('-');
+                            const color = isNeg ? 'red' : 'green';
+
+                            return(
+                                <Table.Tr key={i} style={{ cursor: 'pointer' }} onClick={() => handleRowClick(item)}>
+                                    <Table.Td><Text fw={700} c="white">{item.name}</Text></Table.Td>
+
+                                    <Table.Td style={{ textAlign: 'right' }}>
+                                        <Stack gap={0} align="flex-end">
+                                            <Text fw={600} size="sm" c="white">{item.price}</Text>
+                                            <Text c="dimmed" size="xs">{item.nta}</Text>
+                                        </Stack>
+                                    </Table.Td>
+
+                                    <Table.Td style={{ textAlign: 'right' }}>
+                                        <Stack gap={0} align="flex-end">
+                                            <Text c={color} fw={600} size="sm">{item.percent}</Text>
+                                            <Text c={color} size="xs">{item.chg}</Text>
+                                        </Stack>
+                                    </Table.Td>
+                                </Table.Tr>
+                            );
+                        })}
                     </Table.Tbody>
                 </Table>
             </ScrollArea>
@@ -108,10 +136,11 @@ export const LandingPage = () => {
     return (
         <Box p="md" bg="#070e18" style={{ minHeight: '100vh' }}>
             <Group mb="md">
-                <Button variant="filled" color="dark" size="sm" onClick={() => setRefreshKey(k => k + 1)}>
+                {/*<Button variant="filled" color="dark" size="sm" onClick={() => setRefreshKey(k => k + 1)}>
                     Refresh
-                </Button>
+                </Button>*/}
             </Group>
+
             <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="md">
                 {TABLE_CONFIG.map(t => (
                     <StockTable key={`${t.title}-${refreshKey}`} title={t.title} refreshKey={refreshKey} />
