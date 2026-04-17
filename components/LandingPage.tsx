@@ -1,23 +1,23 @@
 "use client";
-import { Group, Stack, Text, Table, ScrollArea, SimpleGrid, Box, UnstyledButton, Menu, Center, Burger, Drawer, Container, rem, Paper, Button } from '@mantine/core';
+import { Group, Stack, Text, Table, SimpleGrid, Box, UnstyledButton, Center, Burger, Drawer, Container, rem, Button } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { TrendingUp, Coins, BarChart3, Bot, Zap, Sparkles, Building2, ChevronDown } from 'lucide-react';
 
 // ==========================================
-// 1. data
+// 1. Data & Config
 // ==========================================
 const stocks = [
-    { name: '5ER', price: '0.275', nta: '0.090', percent: '+5.80%', chg: '+0.015' },
-    { name: 'AAX', price: '1.230', nta: '1.161', percent: '+3.40%', chg: '+0.040' },
-    { name: 'SUNMED', price: '1.870', nta: '0.220', percent: '+0.50%', chg: '+0.010' },
-    { name: 'ZETRIX', price: '0.785', nta: '48.020', percent: '+1.90%', chg: '+0.015' },
-    { name: 'IOIPG', price: '3.880', nta: '4.530', percent: '+2.90%', chg: '+0.110' },
-    { name: 'CIMB', price: '7.500', nta: '6.520', percent: '-0.70%', chg: '-0.050' },
-    { name: 'GAMUDA', price: '4.130', nta: '2.130', percent: '+1.50%', chg: '+0.060' },
-    { name: 'PBBANK', price: '4.600', nta: '3.103', percent: '-0.90%', chg: '-0.040' },
-    { name: 'TENAGA', price: '14.140', nta: '8.713', percent: '-1.30%', chg: '-0.180' },
+    { name: '5ER',    price: '0.275',  nta: '0.090',  percent: '+5.80%', chg: '+0.015' },
+    { name: 'AAX',    price: '1.230',  nta: '1.161',  percent: '+3.40%', chg: '+0.040' },
+    { name: 'SUNMED', price: '1.870',  nta: '0.220',  percent: '+0.50%', chg: '+0.010' },
+    { name: 'ZETRIX', price: '0.785',  nta: '48.020', percent: '+1.90%', chg: '+0.015' },
+    { name: 'IOIPG',  price: '3.880',  nta: '4.530',  percent: '+2.90%', chg: '+0.110' },
+    { name: 'CIMB',   price: '7.500',  nta: '6.520',  percent: '-0.70%', chg: '-0.050' },
+    { name: 'GAMUDA', price: '4.130',  nta: '2.130',  percent: '+1.50%', chg: '+0.060' },
+    { name: 'PBBANK', price: '4.600',  nta: '3.103',  percent: '-0.90%', chg: '-0.040' },
+    { name: 'TENAGA', price: '14.140', nta: '8.713',  percent: '-1.30%', chg: '-0.180' },
 ];
 
 type StockKey = keyof typeof stocks[0];
@@ -30,27 +30,26 @@ const TABLE_CONFIG = [
 
 const NAV_LINKS = [
     { label: '馬來西亞股市', subLabel: 'KLSE Stock Market', Icon: TrendingUp, active: true },
-    { label: '加密貨幣', subLabel: 'Cryptocurrency', Icon: Coins },
-    { label: '期貨', subLabel: 'Futures', Icon: BarChart3 },
-    { label: '皮皮鳥 AI', subLabel: 'Pipibird AI', Icon: Bot },
-    { label: '自動交易', subLabel: 'Papaya Trade', Icon: Zap },
-    { label: '八字玄學', subLabel: 'Bazi', Icon: Sparkles },
-    { label: '房地產', subLabel: 'Property', Icon: Building2 },
-];
+    { label: '加密貨幣',     subLabel: 'Cryptocurrency',    Icon: Coins },
+    { label: '期貨',         subLabel: 'Futures',           Icon: BarChart3 },
+    { label: '皮皮鳥 AI',    subLabel: 'Pipibird AI',       Icon: Bot },
+    { label: '自動交易',     subLabel: 'Papaya Trade',      Icon: Zap },
+    { label: '八字玄學',     subLabel: 'Bazi',              Icon: Sparkles },
+    { label: '房地產',       subLabel: 'Property',          Icon: Building2 },
+]; 
 
 // ==========================================
-// 2. Header
+// 2. WuChangHeader Component
 // ==========================================
 const WuChangHeader = () => {
     const [opened, { toggle, close }] = useDisclosure(false);
 
-    // 动态styles Active & Hover 
     const getLinkStyle = (active?: boolean): React.CSSProperties => ({
-        color: active ? '#00d2ff' : '#b0b0b0', 
-        padding: `${rem(6)} ${rem(12)}`,
+        color: active ? '#f0900e' : '#b07840',
+        padding: `${rem(6)} ${rem(10)}`,
         borderRadius: rem(8),
-        border: active ? '1px solid rgba(0, 210, 255, 0.3)' : '1px solid transparent',
-        backgroundColor: active ? 'rgba(0, 210, 255, 0.05)' : 'transparent',
+        border: active ? '1px solid rgba(240,144,14,0.4)' : '1px solid transparent',
+        backgroundColor: active ? 'rgba(240,144,14,0.1)' : 'transparent',
         transition: 'all 0.2s ease',
         cursor: 'pointer',
         display: 'flex',
@@ -59,63 +58,65 @@ const WuChangHeader = () => {
 
     return (
         <>
-            <style>{`.nav-btn:hover { background-color: rgba(255,255,255,0.05) !important; color: white !important; }`}</style>
-            
-            <Box bg="#070e18" style={{ borderBottom: '1px solid #1a2e45', position: 'sticky', top: 0, zIndex: 1000 }}>
-                <Container size="xl" h={rem(80)}>
+            <Box bg="#2e1010" style={{ borderBottom: '1px solid #7a2020', position: 'sticky', top: 0, zIndex: 1000 }}>
+                <Container size="xl" h={rem(70)}>
                     <Group justify="space-between" h="100%" wrap="nowrap">
-                        {/* Logo area */}
+ 
+                        {/* Logo */}
                         <Group gap="sm" wrap="nowrap">
-                            <Center bg="#0f1e30" style={{ borderRadius: '50%', width: 44, height: 44, border: '1px solid #2a3e55' }}>
-                                <img src="https://api.dicebear.com/7.x/bottts/svg?seed=wuchang" alt="Logo" width={30} />
+                            <Center bg="#3d1414" style={{ borderRadius: '50%', width: 42, height: 42, border: '2px solid #e03030' }}>
+                                <img src="https://api.dicebear.com/7.x/bottts/svg?seed=wuchang" alt="Logo" width={28} />
                             </Center>
                             <Stack gap={0} visibleFrom="xs">
-                                <Text fw={800} c="white" size="lg" style={{ letterSpacing: '0.5px', lineHeight: 1.2 }}>WuChang 無常</Text>
-                                <Text size="10px" c="#606060" fw={500}>THE NO.1 AI FINANCIAL PLATFORM</Text>
+                                <Text fw={800} size="lg" style={{ letterSpacing: '0.5px', lineHeight: 1.2, color: '#ffd580' }}>WuChang 無常</Text>
+                                <Text size="10px" fw={500} style={{ color: '#8a4040' }}>THE NO.1 AI FINANCIAL PLATFORM</Text>
                             </Stack>
                         </Group>
-
-                        {/* middle navigation (PC) */}
-                        <Group gap={rem(4)} visibleFrom="md" wrap="nowrap">
+ 
+                        {/* Nav */}
+                        <Group gap={rem(2)} visibleFrom="md" wrap="nowrap">
                             {NAV_LINKS.map((link) => (
-                                <UnstyledButton key={link.label} style={getLinkStyle(link.active)} className="nav-btn">
-                                    <Group gap="sm" wrap="nowrap">
-                                        <link.Icon size={18} color={link.active ? '#00d2ff' : '#606060'} />
+                                <UnstyledButton key={link.label} style={getLinkStyle(link.active)}>
+                                    <Group gap="xs" wrap="nowrap">
+                                        <link.Icon size={16} color={link.active ? '#ffd580' : '#7a2020'} />
                                         <Stack gap={0}>
-                                            <Text size="13px" fw={600}>{link.label}</Text>
-                                            <Text size="10px" c="#606060" style={{ marginTop: rem(-2) }}>{link.subLabel}</Text>
+                                            <Text size="12px" fw={600}>{link.label}</Text>
+                                            <Text size="9px" style={{ color: '#7a3030', marginTop: rem(-2) }}>{link.subLabel}</Text>
                                         </Stack>
-                                        {link.active && <ChevronDown size={12} color="#606060" />}
+                                        {link.active && <ChevronDown size={11} color="#c4972a" />}
                                     </Group>
                                 </UnstyledButton>
                             ))}
                         </Group>
-
-                        {/* 右边function area */}
+ 
+                        {/* Login + Burger */}
                         <Group gap="md">
-                            <UnstyledButton visibleFrom="sm" fw={500} c="#b0b0b0" px="md" py={6} style={{ border: '1px solid #2a3e55', borderRadius: 6, fontSize: 13 }}>
-                                BM
-                            </UnstyledButton>
-                            <Button variant="gradient" gradient={{ from: '#0095ff', to: '#00d2ff' }} radius="md" px="xl" fw={700}>
+                            <Button
+                                variant="gradient"
+                                gradient={{ from: '#8b0000', to: '#e03030' }}
+                                radius="md" px="xl" fw={700}
+                                style={{ border: '1px solid #ffd58040', color: '#ffd580' }}>
                                 Login
                             </Button>
-                            <Burger opened={opened} onClick={toggle} hiddenFrom="md" size="sm" color="dimmed" />
+                            <Burger opened={opened} onClick={toggle} hiddenFrom="md" size="sm" color="#c4972a" />
                         </Group>
                     </Group>
                 </Container>
             </Box>
-
-            {/* mobile menu */}
-            <Drawer opened={opened} onClose={close} size="100%" padding="md" title="WuChang Navigation" hiddenFrom="md" styles={{ content: { backgroundColor: '#070e18' }, header: { backgroundColor: '#070e18', borderBottom: '1px solid #1a2e45' } }}>
+ 
+            <Drawer opened={opened} onClose={close} size="100%" padding="md" title="Menu"
+                styles={{
+                    content: { backgroundColor: '#1c0a0a' },
+                    header: { backgroundColor: '#1c0a0a', borderBottom: '1px solid #7a2020' },
+                    title: { color: '#ffd580', fontWeight: 700 },
+                }}
+            >
                 <Stack gap="xs">
                     {NAV_LINKS.map((link) => (
-                        <UnstyledButton key={link.label} p="md" bg="#0b1622" style={{ borderRadius: 8 }}>
+                        <UnstyledButton key={link.label} p="md" bg="#2e1010" style={{ borderRadius: 8, border: '1px solid #7a2020' }}>
                             <Group>
-                                <link.Icon size={20} color="#00d2ff" />
-                                <Stack gap={0}>
-                                    <Text c="white" fw={600}>{link.label}</Text>
-                                    <Text c="dimmed" size="xs">{link.subLabel}</Text>
-                                </Stack>
+                                <link.Icon size={20} color="#e03030" />
+                                <Text fw={600} style={{ color: '#ffd580' }}>{link.label}</Text>
                             </Group>
                         </UnstyledButton>
                     ))}
@@ -126,9 +127,9 @@ const WuChangHeader = () => {
 };
 
 // ==========================================
-// 3. StockTable
+// 3. StockTable Component
 // ==========================================
-const StockTable = ({ title, refreshKey }: { title: string; refreshKey: number }) => {
+const StockTable = ({ title }: { title: string }) => {
     const router = useRouter();
     const [sortBy, setSortBy] = useState<StockKey | null>(null);
     const [reversed, setReversed] = useState(false);
@@ -136,6 +137,18 @@ const StockTable = ({ title, refreshKey }: { title: string; refreshKey: number }
     const handleSort = (field: StockKey) => {
         setReversed(sortBy === field ? !reversed : false);
         setSortBy(field);
+    };
+
+    // link to app/stock/[name]
+    const handleRowClick = (item: typeof stocks[0]) => {
+        const params = new URLSearchParams({
+            name: item.name,
+            price: item.price,
+            nta: item.nta,
+            percent: item.percent,
+            chg: item.chg,
+        }).toString();
+        router.push(`/stock/${item.name}?${params}`);
     };
 
     const sortedData = [...stocks].sort((a, b) => {
@@ -148,49 +161,62 @@ const StockTable = ({ title, refreshKey }: { title: string; refreshKey: number }
     });
 
     const Icon = (field: StockKey) => sortBy === field ? (reversed ? '↓' : '↑') : '↕';
+    const ptr: React.CSSProperties = { cursor: 'pointer' };
 
     return (
-        <Box bg="#0b1622" style={{ borderRadius: 12, overflow: 'hidden', border: '1px solid #1a2e45' }}>
-            <Box px="md" py={10} bg="#0f1e30" style={{ borderBottom: '1px solid #1a2e45' }}>
-                <Text fw={700} c="white" size="sm" ta="center">{title}</Text>
+        <Box bg="#2e1010" style={{ borderRadius: 12, overflow: 'hidden', border: '1px solid #7a2020' }}>
+            {/* Title bar: gold text on red strip */}
+            <Box px="md" py={10} style={{ background: 'linear-gradient(90deg, #7a1010 0%, #a02020 100%)', borderBottom: '1px solid #7a2020' }}>
+                <Text fw={800} size="sm" ta="center" style={{ color: '#ffd580', letterSpacing: 1 }}>{title}</Text>
             </Box>
+ 
             <Table verticalSpacing="md" highlightOnHover>
                 <Table.Thead>
-                    <Table.Tr style={{ borderBottom: '1px solid #1a2e45' }}>
-                        <Table.Th style={{ cursor: 'pointer' }} onClick={() => handleSort('name')}>
-                            <Text fw={700} c={sortBy === 'name' ? 'white' : 'dimmed'} size="xs">STOCK {Icon('name')}</Text>
+                    <Table.Tr style={{ borderBottom: '1px solid #5a1818' }}>
+                        <Table.Th style={ptr} onClick={() => handleSort('name')}>
+                            <Text fw={700} size="xs" style={{ color: sortBy === 'name' ? '#ffd580' : '#8a4040' }}>
+                                STOCK {Icon('name')}
+                            </Text>
                         </Table.Th>
+
                         <Table.Th style={{ textAlign: 'right' }}>
                             <Stack gap={0} align="flex-end">
-                                <Text fw={700} size="xs" style={{ cursor: 'pointer' }} c={sortBy === 'price' ? 'white' : 'dimmed'} onClick={() => handleSort('price')}>PRICE {Icon('price')}</Text>
-                                <Text size="10px" c="dimmed">NTA</Text>
+                                <Text fw={700} size="xs" style={{ ...ptr, color: sortBy === 'price' ? '#ffd580' : '#8a4040' }} onClick={() => handleSort('price')}>PRICE {Icon('price')}</Text>
+                                <Text size="10px" style={{ ...ptr, color: sortBy === 'nta' ? '#ffd580' : '#8a4040' }} onClick={() => handleSort('nta')}>NTA {Icon('nta')}</Text>
                             </Stack>
                         </Table.Th>
+
                         <Table.Th style={{ textAlign: 'right' }}>
                             <Stack gap={0} align="flex-end">
-                                <Text fw={700} size="xs" style={{ cursor: 'pointer' }} c={sortBy === 'percent' ? 'white' : 'dimmed'} onClick={() => handleSort('percent')}>C(%) {Icon('percent')}</Text>
-                                <Text size="10px" c="dimmed">CHG</Text>
+                                <Text fw={700} size="xs" style={{ ...ptr, color: sortBy === 'percent' ? '#ffd580' : '#8a4040' }} onClick={() => handleSort('percent')}>C(%) {Icon('percent')}</Text>
+                                <Text size="10px" style={{ ...ptr, color: sortBy === 'chg' ? '#ffd580' : '#8a4040' }} onClick={() => handleSort('chg')}>CHG {Icon('chg')}</Text>
                             </Stack>
                         </Table.Th>
                     </Table.Tr>
                 </Table.Thead>
+ 
                 <Table.Tbody>
                     {sortedData.map((item, i) => {
                         const isNeg = item.percent.startsWith('-');
-                        const color = isNeg ? '#ff4d4d' : '#00e676';
+                        // positive: bright gold  |  negative: vivid red
+                        const color = isNeg ? '#e03030' : '#7dd87d';
                         return (
-                            <Table.Tr key={i} style={{ cursor: 'pointer', borderBottom: '1px solid #142538' }}>
-                                <Table.Td><Text fw={700} c="white">{item.name}</Text></Table.Td>
+                            <Table.Tr key={i} style={{ cursor: 'pointer', borderBottom: '1px solid #3d1414' }} onClick={() => handleRowClick(item)}>
+                                <Table.Td>
+                                    <Text fw={700} style={{ color: '#ffd580' }}>{item.name}</Text>
+                                </Table.Td>
+
                                 <Table.Td style={{ textAlign: 'right' }}>
                                     <Stack gap={0} align="flex-end">
-                                        <Text fw={600} size="sm" c="white">{item.price}</Text>
-                                        <Text c="dimmed" size="xs">{item.nta}</Text>
+                                        <Text fw={600} size="sm" style={{ color: '#f5e6a8' }}>{item.price}</Text>
+                                        <Text size="xs" style={{ color: '#8a4040' }}>{item.nta}</Text>
                                     </Stack>
                                 </Table.Td>
+
                                 <Table.Td style={{ textAlign: 'right' }}>
                                     <Stack gap={0} align="flex-end">
-                                        <Text c={color} fw={600} size="sm">{item.percent}</Text>
-                                        <Text c={color} size="xs">{item.chg}</Text>
+                                        <Text fw={700} size="sm" style={{ color }}>{item.percent}</Text>
+                                        <Text size="xs" style={{ color }}>{item.chg}</Text>
                                     </Stack>
                                 </Table.Td>
                             </Table.Tr>
@@ -203,17 +229,15 @@ const StockTable = ({ title, refreshKey }: { title: string; refreshKey: number }
 };
 
 // ==========================================
-// 4. LandingPage 
+// 4. LandingPage
 // ==========================================
 export const LandingPage = () => {
     return (
-        <Box bg="#070e18" style={{ minHeight: '100vh' }}>
+        <Box style={{ minHeight: '100vh', background: '#1c0a0a' }}>
             <WuChangHeader />
             <Container size="xl" py="xl">
                 <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="xl">
-                    {TABLE_CONFIG.map(t => (
-                        <StockTable key={t.title} title={t.title} refreshKey={0} />
-                    ))}
+                    {TABLE_CONFIG.map(t => <StockTable key={t.title} title={t.title} />)}
                 </SimpleGrid>
             </Container>
         </Box>
