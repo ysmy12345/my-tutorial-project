@@ -37,7 +37,8 @@ import {
   validateRequired,
 } from "../../utils/validation";
 import {
-  login,
+  // login,
+  loginApi,
   requestSignUpOtp,
   verifySignUpEmail,
   completeSignUp,
@@ -140,7 +141,7 @@ export function AuthPage() {
       try {
         const email = form.values.loginEmail;
         const password = form.values.loginpassword;
-        await login(email, password);
+        await loginApi(email, password);
         router.replace("home");
       } catch (error: any) {
         showFail(error.message || t('invalidCredentials'));
@@ -160,7 +161,7 @@ export function AuthPage() {
 
       await verifySignUpEmail(signUpSessionToken, pin);
       await completeSignUp(signUpSessionToken, email, password);
-      await login(email, password);
+      await loginApi(email, password);
 
       // Close verification modal and open profile modal
       setVerificationModalOpened.close();

@@ -1,5 +1,5 @@
 import axios, { InternalAxiosRequestConfig, AxiosError } from "axios";
-import { Storage } from "./storage";
+import { Storage } from "../utils/storage";
 
 // Extend InternalAxiosRequestConfig to support `skipAuth`
 interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
@@ -109,10 +109,10 @@ const handleApiError = (error: any) => {
 //   }
 // };
 
-export const login = async (email: string, password: string) => {
+export const loginApi = async (email: string, password: string) => {
   try{
     //1. send request
-    const response = await fetch('', {
+    const response = await fetch('http://localhost:5000/api/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
