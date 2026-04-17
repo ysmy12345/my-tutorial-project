@@ -1162,3 +1162,27 @@ export const loginApi = async (email: string, password: string) => {
     throw error;
   }
 };
+
+//=================================================================
+// Stock market mock data — future: replace with real API call
+export const getStockList = async () => {
+  try {
+    const mockJson = [
+      { name: '5ER',    price: '0.275',  nta: '0.090',  percent: '+5.80%', chg: '+0.015' },
+      { name: 'AAX',    price: '1.230',  nta: '1.161',  percent: '+3.40%', chg: '+0.040' },
+      { name: 'SUNMED', price: '1.870',  nta: '0.220',  percent: '+0.50%', chg: '+0.010' },
+      { name: 'ZETRIX', price: '0.785',  nta: '48.020', percent: '+1.90%', chg: '+0.015' },
+      { name: 'IOIPG',  price: '3.880',  nta: '4.530',  percent: '+2.90%', chg: '+0.110' },
+      { name: 'CIMB',   price: '7.500',  nta: '6.520',  percent: '-0.70%', chg: '-0.050' },
+      { name: 'GAMUDA', price: '4.130',  nta: '2.130',  percent: '+1.50%', chg: '+0.060' },
+      { name: 'PBBANK', price: '4.600',  nta: '3.103',  percent: '-0.90%', chg: '-0.040' },
+      { name: 'TENAGA', price: '14.140', nta: '8.713',  percent: '-1.30%', chg: '-0.180' },
+    ];
+
+    console.log('getStockList mock:', mockJson);
+    return mockJson;
+  } catch (error) {
+    console.error('getStockList error:', error);
+    throw error;
+  }
+};

@@ -1,14 +1,15 @@
 "use client";
 import { Group, Stack, Text, Table, SimpleGrid, Box, UnstyledButton, Center, Burger, Drawer, Container, rem, Button } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { TrendingUp, Coins, BarChart3, Bot, Zap, Sparkles, Building2, ChevronDown } from 'lucide-react';
+import { getStockList } from '../utils/api'; // ← call the new function
 
 // ==========================================
-// 1. Data & Config
+// 1. Types & Config
 // ==========================================
-const stocks = [
+/*const stocks = [
     { name: '5ER',    price: '0.275',  nta: '0.090',  percent: '+5.80%', chg: '+0.015' },
     { name: 'AAX',    price: '1.230',  nta: '1.161',  percent: '+3.40%', chg: '+0.040' },
     { name: 'SUNMED', price: '1.870',  nta: '0.220',  percent: '+0.50%', chg: '+0.010' },
@@ -18,9 +19,17 @@ const stocks = [
     { name: 'GAMUDA', price: '4.130',  nta: '2.130',  percent: '+1.50%', chg: '+0.060' },
     { name: 'PBBANK', price: '4.600',  nta: '3.103',  percent: '-0.90%', chg: '-0.040' },
     { name: 'TENAGA', price: '14.140', nta: '8.713',  percent: '-1.30%', chg: '-0.180' },
-];
+];*/
 
-type StockKey = keyof typeof stocks[0];
+interface Stock {
+    name: string;
+    price: string;
+    nta: string;
+    percent: string;
+    chg: string;
+}
+
+type StockKey = keyof Stock;
 
 const TABLE_CONFIG = [
     { title: 'Top Volume' },
@@ -45,11 +54,11 @@ const WuChangHeader = () => {
     const [opened, { toggle, close }] = useDisclosure(false);
 
     const getLinkStyle = (active?: boolean): React.CSSProperties => ({
-        color: active ? '#f0900e' : '#b07840',
+        color: active ? '#ffd580' : '#8a4040',
         padding: `${rem(6)} ${rem(10)}`,
         borderRadius: rem(8),
-        border: active ? '1px solid rgba(240,144,14,0.4)' : '1px solid transparent',
-        backgroundColor: active ? 'rgba(240,144,14,0.1)' : 'transparent',
+        border: active ? '1px solid rgba(255,213,128,0.45)' : '1px solid transparent',
+        backgroundColor: active ? 'rgba(255,213,128,0.08)' : 'transparent',
         transition: 'all 0.2s ease',
         cursor: 'pointer',
         display: 'flex',
@@ -61,19 +70,17 @@ const WuChangHeader = () => {
             <Box bg="#2e1010" style={{ borderBottom: '1px solid #7a2020', position: 'sticky', top: 0, zIndex: 1000 }}>
                 <Container size="xl" h={rem(70)}>
                     <Group justify="space-between" h="100%" wrap="nowrap">
- 
-                        {/* Logo */}
                         <Group gap="sm" wrap="nowrap">
                             <Center bg="#3d1414" style={{ borderRadius: '50%', width: 42, height: 42, border: '2px solid #e03030' }}>
                                 <img src="https://api.dicebear.com/7.x/bottts/svg?seed=wuchang" alt="Logo" width={28} />
                             </Center>
+
                             <Stack gap={0} visibleFrom="xs">
                                 <Text fw={800} size="lg" style={{ letterSpacing: '0.5px', lineHeight: 1.2, color: '#ffd580' }}>WuChang 無常</Text>
                                 <Text size="10px" fw={500} style={{ color: '#8a4040' }}>THE NO.1 AI FINANCIAL PLATFORM</Text>
                             </Stack>
                         </Group>
  
-                        {/* Nav */}
                         <Group gap={rem(2)} visibleFrom="md" wrap="nowrap">
                             {NAV_LINKS.map((link) => (
                                 <UnstyledButton key={link.label} style={getLinkStyle(link.active)}>
@@ -89,7 +96,6 @@ const WuChangHeader = () => {
                             ))}
                         </Group>
  
-                        {/* Login + Burger */}
                         <Group gap="md">
                             <Button
                                 variant="gradient"
@@ -129,7 +135,7 @@ const WuChangHeader = () => {
 // ==========================================
 // 3. StockTable Component
 // ==========================================
-const StockTable = ({ title }: { title: string }) => {
+const StockTable = ({ title, stocks }: { title: string; stocks: Stock[] }) => {
     const router = useRouter();
     const [sortBy, setSortBy] = useState<StockKey | null>(null);
     const [reversed, setReversed] = useState(false);
@@ -140,12 +146,12 @@ const StockTable = ({ title }: { title: string }) => {
     };
 
     // link to app/stock/[name]
-    const handleRowClick = (item: typeof stocks[0]) => {
+    const handleRowClick = (item: Stock) => {
         const params = new URLSearchParams({
-            name: item.name,
+            name: item.name, 
             price: item.price,
-            nta: item.nta,
-            percent: item.percent,
+            nta: item.nta, 
+            percent: item.percent, 
             chg: item.chg,
         }).toString();
         router.push(`/stock/${item.name}?${params}`);
@@ -165,7 +171,6 @@ const StockTable = ({ title }: { title: string }) => {
 
     return (
         <Box bg="#2e1010" style={{ borderRadius: 12, overflow: 'hidden', border: '1px solid #7a2020' }}>
-            {/* Title bar: gold text on red strip */}
             <Box px="md" py={10} style={{ background: 'linear-gradient(90deg, #7a1010 0%, #a02020 100%)', borderBottom: '1px solid #7a2020' }}>
                 <Text fw={800} size="sm" ta="center" style={{ color: '#ffd580', letterSpacing: 1 }}>{title}</Text>
             </Box>
@@ -174,9 +179,7 @@ const StockTable = ({ title }: { title: string }) => {
                 <Table.Thead>
                     <Table.Tr style={{ borderBottom: '1px solid #5a1818' }}>
                         <Table.Th style={ptr} onClick={() => handleSort('name')}>
-                            <Text fw={700} size="xs" style={{ color: sortBy === 'name' ? '#ffd580' : '#8a4040' }}>
-                                STOCK {Icon('name')}
-                            </Text>
+                            <Text fw={700} size="xs" style={{ color: sortBy === 'name' ? '#ffd580' : '#8a4040' }}>STOCK {Icon('name')}</Text>
                         </Table.Th>
 
                         <Table.Th style={{ textAlign: 'right' }}>
@@ -198,8 +201,7 @@ const StockTable = ({ title }: { title: string }) => {
                 <Table.Tbody>
                     {sortedData.map((item, i) => {
                         const isNeg = item.percent.startsWith('-');
-                        // positive: bright gold  |  negative: vivid red
-                        const color = isNeg ? '#e03030' : '#7dd87d';
+                        const color = isNeg ? '#e03030' : '#ffd580';
                         return (
                             <Table.Tr key={i} style={{ cursor: 'pointer', borderBottom: '1px solid #3d1414' }} onClick={() => handleRowClick(item)}>
                                 <Table.Td>
@@ -232,12 +234,29 @@ const StockTable = ({ title }: { title: string }) => {
 // 4. LandingPage
 // ==========================================
 export const LandingPage = () => {
+    const [stocks, setStocks] = useState<Stock[]>([]);
+ 
+    // Call getStockList once on mount
+    useEffect(() => {
+        const fetchStocks = async () => {
+            try {
+                const data = await getStockList();
+                setStocks(data);
+            } catch (error) {
+                console.error('Failed to fetch stocks:', error);
+            }
+        };
+        fetchStocks();
+    }, []);
+ 
     return (
         <Box style={{ minHeight: '100vh', background: '#1c0a0a' }}>
             <WuChangHeader />
             <Container size="xl" py="xl">
                 <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="xl">
-                    {TABLE_CONFIG.map(t => <StockTable key={t.title} title={t.title} />)}
+                    {TABLE_CONFIG.map(t => (
+                        <StockTable key={t.title} title={t.title} stocks={stocks} />
+                    ))}
                 </SimpleGrid>
             </Container>
         </Box>
