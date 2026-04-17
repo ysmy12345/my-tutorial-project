@@ -23,6 +23,8 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import classes from "./AuthPage.module.css";
 
+
+
 // import { EmailVerificationModal } from "../modal/EmailVerificationModal";
 // import { CompleteProfileModal } from "../modal/CompleteProfileModal";
 // import { ForgetPasswordFlow } from "../ForgetPasswordFlow";
@@ -37,18 +39,22 @@ import {
   validateRequired,
 } from "../../utils/validation";
 import {
-  // login,
-  loginApi,
+  login,
   requestSignUpOtp,
   verifySignUpEmail,
   completeSignUp,
+  loginApi,
 } from "../../utils/api";
 import { Storage } from "../../utils/storage";
 
 export function AuthPage() {
   const t = useTranslations('auth');
   const tValidation = useTranslations("validate");
+  //================================
   const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  //===============================
 
   const [authMode, setAuthMode] = useState<"login" | "signup">("login");
   const [rememberedUser, setRememberedUser] = useState<string | null>(null);
@@ -202,229 +208,264 @@ export function AuthPage() {
     setShowFailToast(true);
   };
 
-  return (
-    <Container size="sm">
-      {/* <Box className={classes.centerContainer}>
-        <Stack>
-          <Center>
-            <SegmentedControl
-              radius="xl"
-              size="md"
-              data={[
-                { value: "login", label: t('login') },
-                { value: "signup", label: t('signUp') },
-              ]}
-              value={authMode}
-              onChange={(value) => {
-                setAuthMode(value as "login" | "signup");
-                // Reset terms agreement when switching modes
-                if (value === "login") form.setFieldValue("terms", false);
-                // Always show email input in signup mode
-                if (value === "signup") {
-                  setShowEmailInput(true);
-                } else {
-                  // In login mode, check if we have a remembered user
-                  setShowEmailInput(!rememberedUser);
-                }
-              }}
-              mt={50}
-              classNames={classes}
-              className={classes.segmentedControl}
-            />
-          </Center>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleAuthButtonClick();
-            }}
-          >
-            <Stack mt="lg" gap="md">
-              {authMode === "login" && rememberedUser && !showEmailInput ? (
-                <Group justify="space-between" align="flex-start">
-                  <Stack align="flex-start" gap="xs">
-                    <Text style={theme.other.textSmall} ta="center">
-                      {t('welcome')}
-                    </Text>
-                    <Text style={theme.headings.sizes.h3} ta="center">
-                      {rememberedUser}
-                    </Text>
-                  </Stack>
+  //===============================
+  const handleLogin = async () => {
+        console.log("button clicked！");
+        // 2. call function
+        const result = await loginApi(email, password);
+        if (result.success) {
+            // 3. link page
+            router.push('/home'); 
+        }
+    };
 
-                  <Anchor
-                    size="sm"
-                    className={classes.notYouLink}
-                    onClick={handleNotYouClick}
-                  >
-                    {t('notyou')}
-                  </Anchor>
-                </Group>
-              ) : (
-                <TextInput
-                  radius="xl"
-                  size="md"
-                  leftSection={
-                    <IconMail
-                      size={20}
-                      color={
-                        form.errors[
-                          authMode === "login" ? "loginEmail" : "signupEmail"
-                        ]
-                          ? "var(--mantine-color-red-9)"
-                          : "var(--mantine-color-blue-9)"
-                      }
-                    />
-                  }
-                  rightSection={
-                    (
-                      authMode === "login"
-                        ? form.values.loginEmail
-                        : form.values.signupEmail
-                    ) ? (
-                      <IconXboxXFilled
-                        size={16}
-                        style={{ cursor: "pointer" }}
-                        onClick={() =>
-                          form.setFieldValue(
-                            authMode === "login" ? "loginEmail" : "signupEmail",
-                            ""
-                          )
-                        }
-                      />
-                    ) : null
-                  }
-                  placeholder={
-                    authMode === "login"
-                      ? t('email')
-                      : t('email')
-                  }
-                  classNames={{
-                    input: classes.inputField,
-                    error: classes.inputError,
-                    wrapper: form.errors[
-                      authMode === "login" ? "loginEmail" : "signupEmail"
-                    ]
-                      ? classes.inputErrorWrapper
-                      : undefined,
-                  }}
-                  {...form.getInputProps(
-                    authMode === "login" ? "loginEmail" : "signupEmail"
-                  )}
-                  required
-                />
-              )}
+    return (
+        <Stack gap="md">
+        <TextInput 
+            label="Email" 
+            placeholder="your@email.com" 
+            value={email} 
+            onChange={(e) => setEmail(e.currentTarget.value)} 
+        />
+        <PasswordInput 
+            label="Password" 
+            placeholder="Your password" 
+            value={password} 
+            onChange={(e) => setPassword(e.currentTarget.value)} 
+        />
+        
+        {/* 关键修复点：在这里加上 onClick */}
+        <Button fullWidth onClick={handleLogin}>
+            Login
+        </Button>
+    </Stack>
+    );
 
-              <PasswordInput
-                radius="xl"
-                size="md"
-                leftSection={
-                  <IconKey
-                    size={20}
-                    color={
-                      form.errors[
-                        authMode === "login"
-                          ? "loginpassword"
-                          : "signupPassword"
-                      ]
-                        ? "var(--mantine-color-red-9)"
-                        : "var(--mantine-color-blue-9)"
-                    }
-                  />
-                }
-                placeholder={t('password')}
-                classNames={{
-                  input: classes.inputField,
-                  error: classes.inputError,
-                  wrapper: form.errors[
-                    authMode === "login" ? "loginpassword" : "signupPassword"
-                  ]
-                    ? classes.inputErrorWrapper
-                    : undefined,
-                }}
-                required
-                {...form.getInputProps(
-                  authMode === "login" ? "loginpassword" : "signupPassword"
-                )}
-              />
+  // return (
+  //   <Container size="sm">
+  //     {/* <Box className={classes.centerContainer}>
+  //       <Stack>
+  //         <Center>
+  //           <SegmentedControl
+  //             radius="xl"
+  //             size="md"
+  //             data={[
+  //               { value: "login", label: t('login') },
+  //               { value: "signup", label: t('signUp') },
+  //             ]}
+  //             value={authMode}
+  //             onChange={(value) => {
+  //               setAuthMode(value as "login" | "signup");
+  //               // Reset terms agreement when switching modes
+  //               if (value === "login") form.setFieldValue("terms", false);
+  //               // Always show email input in signup mode
+  //               if (value === "signup") {
+  //                 setShowEmailInput(true);
+  //               } else {
+  //                 // In login mode, check if we have a remembered user
+  //                 setShowEmailInput(!rememberedUser);
+  //               }
+  //             }}
+  //             mt={50}
+  //             classNames={classes}
+  //             className={classes.segmentedControl}
+  //           />
+  //         </Center>
+  //         <form
+  //           onSubmit={(e) => {
+  //             e.preventDefault();
+  //             handleAuthButtonClick();
+  //           }}
+  //         >
+  //           <Stack mt="lg" gap="md">
+  //             {authMode === "login" && rememberedUser && !showEmailInput ? (
+  //               <Group justify="space-between" align="flex-start">
+  //                 <Stack align="flex-start" gap="xs">
+  //                   <Text style={theme.other.textSmall} ta="center">
+  //                     {t('welcome')}
+  //                   </Text>
+  //                   <Text style={theme.headings.sizes.h3} ta="center">
+  //                     {rememberedUser}
+  //                   </Text>
+  //                 </Stack>
 
-              Password strength indicator (only show in signup mode)
-              {authMode === "signup" &&
-                form.values.signupPassword.length > 0 && (
-                  <PasswordStrengthBar
-                    password={form.values["signupPassword"]}
-                  />
-                )}
+  //                 <Anchor
+  //                   size="sm"
+  //                   className={classes.notYouLink}
+  //                   onClick={handleNotYouClick}
+  //                 >
+  //                   {t('notyou')}
+  //                 </Anchor>
+  //               </Group>
+  //             ) : (
+  //               <TextInput
+  //                 radius="xl"
+  //                 size="md"
+  //                 leftSection={
+  //                   <IconMail
+  //                     size={20}
+  //                     color={
+  //                       form.errors[
+  //                         authMode === "login" ? "loginEmail" : "signupEmail"
+  //                       ]
+  //                         ? "var(--mantine-color-red-9)"
+  //                         : "var(--mantine-color-blue-9)"
+  //                     }
+  //                   />
+  //                 }
+  //                 rightSection={
+  //                   (
+  //                     authMode === "login"
+  //                       ? form.values.loginEmail
+  //                       : form.values.signupEmail
+  //                   ) ? (
+  //                     <IconXboxXFilled
+  //                       size={16}
+  //                       style={{ cursor: "pointer" }}
+  //                       onClick={() =>
+  //                         form.setFieldValue(
+  //                           authMode === "login" ? "loginEmail" : "signupEmail",
+  //                           ""
+  //                         )
+  //                       }
+  //                     />
+  //                   ) : null
+  //                 }
+  //                 placeholder={
+  //                   authMode === "login"
+  //                     ? t('email')
+  //                     : t('email')
+  //                 }
+  //                 classNames={{
+  //                   input: classes.inputField,
+  //                   error: classes.inputError,
+  //                   wrapper: form.errors[
+  //                     authMode === "login" ? "loginEmail" : "signupEmail"
+  //                   ]
+  //                     ? classes.inputErrorWrapper
+  //                     : undefined,
+  //                 }}
+  //                 {...form.getInputProps(
+  //                   authMode === "login" ? "loginEmail" : "signupEmail"
+  //                 )}
+  //                 required
+  //               />
+  //             )}
 
-              {authMode === "login" && (
-                <Flex justify="flex-start">
-                  <Anchor
-                    mt="xl"
-                    ml="sm"
-                    size="sm"
-                    className={classes.forgotPassword}
-                    onClick={() => setForgotPasswordOpen(true)}
-                  >
-                    {t('forgotPass')}
-                  </Anchor>
-                </Flex>
-              )}
+  //             <PasswordInput
+  //               radius="xl"
+  //               size="md"
+  //               leftSection={
+  //                 <IconKey
+  //                   size={20}
+  //                   color={
+  //                     form.errors[
+  //                       authMode === "login"
+  //                         ? "loginpassword"
+  //                         : "signupPassword"
+  //                     ]
+  //                       ? "var(--mantine-color-red-9)"
+  //                       : "var(--mantine-color-blue-9)"
+  //                   }
+  //                 />
+  //               }
+  //               placeholder={t('password')}
+  //               classNames={{
+  //                 input: classes.inputField,
+  //                 error: classes.inputError,
+  //                 wrapper: form.errors[
+  //                   authMode === "login" ? "loginpassword" : "signupPassword"
+  //                 ]
+  //                   ? classes.inputErrorWrapper
+  //                   : undefined,
+  //               }}
+  //               required
+  //               {...form.getInputProps(
+  //                 authMode === "login" ? "loginpassword" : "signupPassword"
+  //               )}
+  //             />
 
-              {authMode === "signup" && (
-                <TermsCheckboxGroup
-                  values={checkboxValues}
-                  onChange={handleCheckboxChange}
-                />
-              )}
+  //             Password strength indicator (only show in signup mode)
+  //             {authMode === "signup" &&
+  //               form.values.signupPassword.length > 0 && (
+  //                 <PasswordStrengthBar
+  //                   password={form.values["signupPassword"]}
+  //                 />
+  //               )}
 
-              <Button
-                radius="xl"
-                size="md"
-                className={classes.authButton}
-                disabled={authMode === "signup" && !isFormValid}
-                type="submit"
-              >
-                {authMode === "login" ? t('login') : t('signUp')}
-              </Button>
-            </Stack>
-          </form>
-        </Stack>
-      </Box> */}
+  //             {authMode === "login" && (
+  //               <Flex justify="flex-start">
+  //                 <Anchor
+  //                   mt="xl"
+  //                   ml="sm"
+  //                   size="sm"
+  //                   className={classes.forgotPassword}
+  //                   onClick={() => setForgotPasswordOpen(true)}
+  //                 >
+  //                   {t('forgotPass')}
+  //                 </Anchor>
+  //               </Flex>
+  //             )}
 
-      {/* <EmailVerificationModal
-        opened={verificationModalOpened}
-        onClose={setVerificationModalOpened.close}
-        email={form.values.signupEmail}
-        password={form.values.signupPassword}
-        sessionToken={signUpSessionToken || undefined}
-        onVerify={handleVerify}
-        onResend={handleResend}
-        title={t('verifyEmail')}
-        description={t('placeHolderemail')}
-        verificationError={verificationError}
-      /> */}
+  //             {authMode === "signup" && (
+  //               <TermsCheckboxGroup
+  //                 values={checkboxValues}
+  //                 onChange={handleCheckboxChange}
+  //               />
+  //             )}
 
-      {/* <CompleteProfileModal
-        opened={completeProfileModalOpened}
-        onClose={setCompleteProfileModalOpened.close}
-      /> */}
+  //             <Button
+  //               radius="xl"
+  //               size="md"
+  //               className={classes.authButton}
+  //               disabled={authMode === "signup" && !isFormValid}
+  //               type="submit"
+  //             >
+  //               {authMode === "login" ? t('login') : t('signUp')}
+  //             </Button>
+  //           </Stack>
+  //         </form>
+  //       </Stack>
+  //     </Box> */}
 
-      {/* <ForgetPasswordFlow
-        opened={forgotPasswordOpen}
-        onClose={() => setForgotPasswordOpen(false)}
-      />
+  //     {/* <EmailVerificationModal
+  //       opened={verificationModalOpened}
+  //       onClose={setVerificationModalOpened.close}
+  //       email={form.values.signupEmail}
+  //       password={form.values.signupPassword}
+  //       sessionToken={signUpSessionToken || undefined}
+  //       onVerify={handleVerify}
+  //       onResend={handleResend}
+  //       title={t('verifyEmail')}
+  //       description={t('placeHolderemail')}
+  //       verificationError={verificationError}
+  //     /> */}
 
-      <NoticeModal
-        isOpen={noticeModalOpen}
-        onClose={() => setNoticeModalOpen(false)}
-        title={t('accdeletedNotice')}
-        content={t('delNoticeDes')?.replace(/<br\s*\/?>/gi, '\n')}
-      /> */}
+  //     {/* <CompleteProfileModal
+  //       opened={completeProfileModalOpened}
+  //       onClose={setCompleteProfileModalOpened.close}
+  //     /> */}
 
-      {/* <ToastMessage
-        message={FailToastMessage}
-        visible={showFailToast}
-        onClose={() => setShowFailToast(false)}
-        isSuccess={false}
-      /> */}
-    </Container>
-  );
+  //     {/* <ForgetPasswordFlow
+  //       opened={forgotPasswordOpen}
+  //       onClose={() => setForgotPasswordOpen(false)}
+  //     />
+
+  //     <NoticeModal
+  //       isOpen={noticeModalOpen}
+  //       onClose={() => setNoticeModalOpen(false)}
+  //       title={t('accdeletedNotice')}
+  //       content={t('delNoticeDes')?.replace(/<br\s*\/?>/gi, '\n')}
+  //     /> */}
+
+  //     {/* <ToastMessage
+  //       message={FailToastMessage}
+  //       visible={showFailToast}
+  //       onClose={() => setShowFailToast(false)}
+  //       isSuccess={false}
+  //     /> */}
+  //   </Container>
+
+    
+  // );
 }

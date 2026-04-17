@@ -1138,32 +1138,27 @@ export const loginApi = async (email: string, password: string) => {
     // return result;
 
     //=============================
-    // 模拟internet delay，让login button的 loading effect能被看到
-    await new Promise(resolve => setTimeout(resolve, 500));
+    // // 模拟internet delay，让login button的 loading effect能被看到
+    // await new Promise(resolve => setTimeout(resolve, 500));
 
     //testing
     const mockJson = {
         success: true,
-        message: "Login successful (Mock Data)",
-        token: "abcde12345", // 模拟生成的 Token
-        user: {
-            email: email,
-            name: "testing name" // 你的个人信息
-        }
+        token: "test-token-12345", // 模拟生成的 Token
+        user: { email: email, }
     };
 
-    // 在 F12 testing
-    console.log("Current Login Mock Data:", mockJson);
+    console.log("--- API Test ---", mockJson);
 
-    // 模拟save Token 的logiv，确保之后的router 可以通过
+    // 将假 Token save去电脑，这样 HomePage 就会给pass
     if (mockJson.token) {
       Storage.setToken(mockJson.token);
-    }
+    }  
 
-    return mockJson; // 直接返回这个对象
+    return mockJson; // 直接return 给frontend
   }
   catch (error){
-    handleApiError(error);
+    console.error("error when testing:", error);
     throw error;
   }
 };
