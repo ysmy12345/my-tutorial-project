@@ -87,56 +87,25 @@ const handleApiError = (error: any) => {
 };
 
 // Login
-// export const login = async (email: string, password: string) => {
-//   try {
-//     const response = await api.post(
-//       "/apv/auth/login",
-//       {
-//         userType: "USER",
-//         authType: "EMAIL_PASSWORD",
-//         email,
-//         password,
-//       },
-//       { skipAuth: true } as CustomAxiosRequestConfig // Tell the interceptor to skip attaching the token
-//     );
-//     const token = response.data.sessionToken;
-//     Storage.setToken(token); // Cache token
-
-//     await getProfile();
-//     return response.data;
-//   } catch (error) {
-//     handleApiError(error);
-//   }
-// };
-
-export const loginApi = async (email: string, password: string) => {
-  try{
-    //1. send request
-    const response = await fetch('http://localhost:5000/api/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+export const login = async (email: string, password: string) => {
+  try {
+    const response = await api.post(
+      "/apv/auth/login",
+      {
+        userType: "USER",
+        authType: "EMAIL_PASSWORD",
+        email,
+        password,
       },
-      body: JSON.stringify({email, password}),
-    });
+      { skipAuth: true } as CustomAxiosRequestConfig // Tell the interceptor to skip attaching the token
+    );
+    const token = response.data.sessionToken;
+    Storage.setToken(token); // Cache token
 
-    //2. check response
-    if(!response.ok){
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Login failed');
-    }
-
-    const result = await response.json();
-
-    if(result.token){
-      Storage.setToken(result.token);
-    }
-
-    return result;
-  }
-  catch (error){
+    await getProfile();
+    return response.data;
+  } catch (error) {
     handleApiError(error);
-    throw error;
   }
 };
 
@@ -1139,5 +1108,62 @@ export const checkSystemConfig = async () => {
     return response.data;
   } catch (error) {
     handleApiError(error);
+  }
+};
+
+//=======================================================================
+export const loginApi = async (email: string, password: string) => {
+  try{
+    //1. send request
+    // const response = await fetch('http://localhost:5000/api/login', {
+    //   // method: 'POST',
+    //   // headers: {
+    //   //   'Content-Type': 'application/json',
+    //   // },
+    //   // body: JSON.stringify({email, password}),
+    // });
+
+    // //2. check response
+    // if(!response.ok){
+    //   const errorData = await response.json();
+    //   throw new Error(errorData.message || 'Login failed');
+    // }
+
+    // const result = await response.json();
+
+    // if(result.token){
+    //   Storage.setToken(result.token);
+    // }
+
+    // return result;
+
+    //=============================
+    // 模拟internet delay，让login button的 loading effect能被看到
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    //testing
+    const mockJson = {
+        success: true,
+        message: "Login successful (Mock Data)",
+        token: "abcde12345", // 模拟生成的 Token
+        user: {
+            email: email,
+            name: "testing name" // 你的个人信息
+        }
+    };
+
+    // 在 F12 testing
+    console.log("Current Login Mock Data:", mockJson);
+
+    // 模拟save Token 的logiv，确保之后的router 可以通过
+    if (mockJson.token) {
+      Storage.setToken(mockJson.token);
+    }
+
+    return mockJson; // 直接返回这个对象
+  }
+  catch (error){
+    handleApiError(error);
+    throw error;
   }
 };
