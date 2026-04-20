@@ -53,49 +53,80 @@ const NAV_LINKS = [
     { label: '房地產',       subLabel: 'Property',          Icon: Building2 },
 ]; 
 
+// ── Injected CSS: strong gold hover on rows + nav ────────────────
+const GlobalStyle = () => (
+    <style>{`
+        /* Row hover: full gold background, dark red text — very obvious */
+        .stock-row { transition: background 0.12s, box-shadow 0.12s; }
+        .stock-row:hover { background: #ffd700 !important; box-shadow: inset 0 0 0 2px #900000; }
+        .stock-row:hover td * { color: #900000 !important; }
+ 
+        /* Nav link hover */
+        .nav-link { transition: background 0.15s, color 0.15s; }
+        .nav-link:hover { background: rgba(255,215,0,0.22) !important; color: #ffd700 !important; }
+ 
+        /* Drawer item hover */
+        .drawer-item { transition: background 0.15s; }
+        .drawer-item:hover { background: #b00000 !important; }
+    `}</style>
+);
+
 // ==========================================
 // WuChangHeader Component
 // ==========================================
 const WuChangHeader = () => {
     const [opened, { toggle, close }] = useDisclosure(false);
-
-    const getLinkStyle = (active?: boolean): React.CSSProperties => ({
-        color: active ? '#ffd700' : '#ffaa00',
+ 
+    const activeLinkStyle: React.CSSProperties = {
+        color: '#ffd700',
         padding: `${rem(6)} ${rem(10)}`,
         borderRadius: rem(8),
-        border: active ? '1px solid rgba(255,215,0,0.6)' : '1px solid transparent',
-        backgroundColor: active ? 'rgba(255,215,0,0.12)' : 'transparent',
-        transition: 'all 0.2s ease',
+        border: '1px solid rgba(255,215,0,0.7)',
+        backgroundColor: 'rgba(255,215,0,0.15)',
         cursor: 'pointer',
         display: 'flex',
         alignItems: 'center',
-    });
+    };
 
+    const inactiveLinkStyle: React.CSSProperties = {
+        color: '#ffcc33',
+        padding: `${rem(6)} ${rem(10)}`,
+        borderRadius: rem(8),
+        border: '1px solid transparent',
+        backgroundColor: 'transparent',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+    };
+ 
     return (
         <>
-            <Box style={{ background: '#990000', borderBottom: '2px solid #ffd700', position: 'sticky', top: 0, zIndex: 1000 }}>
+            <GlobalStyle />
+            <Box style={{ background: '#900000', borderBottom: '3px solid #ffd700', position: 'sticky', top: 0, zIndex: 1000 }}>
                 <Container size="xl" h={rem(70)}>
                     <Group justify="space-between" h="100%" wrap="nowrap">
                         {/* Logo */}
                         <Group gap="sm" wrap="nowrap">
-                            <Center style={{ borderRadius: '50%', width: 42, height: 42, border: '2px solid #ffd700', background: '#770000' }}>
-                                <img src="https://api.dicebear.com/7.x/bottts/svg?seed=wuchang" alt="Logo" width={28} />
+                            <Center style={{ borderRadius: '50%', width: 44, height: 44, border: '2px solid #ffd700', background: '#700000' }}>
+                                <img src="https://api.dicebear.com/7.x/bottts/svg?seed=wuchang" alt="Logo" width={30} />
                             </Center>
+
                             <Stack gap={0} visibleFrom="xs">
                                 <Text fw={900} size="lg" style={{ letterSpacing: '0.5px', lineHeight: 1.2, color: '#ffd700' }}>WuChang 無常</Text>
-                                <Text size="10px" fw={600} style={{ color: '#ffaa00' }}>THE NO.1 AI FINANCIAL PLATFORM</Text>
+                                <Text size="10px" fw={600} style={{ color: '#ffcc33' }}>THE NO.1 AI FINANCIAL PLATFORM</Text>
                             </Stack>
                         </Group>
  
                         {/* Nav */}
                         <Group gap={rem(2)} visibleFrom="md" wrap="nowrap">
                             {NAV_LINKS.map((link) => (
-                                <UnstyledButton key={link.label} style={getLinkStyle(link.active)}>
+                                <UnstyledButton key={link.label} className="nav-link"
+                                    style={link.active ? activeLinkStyle : inactiveLinkStyle}>
                                     <Group gap="xs" wrap="nowrap">
-                                        <link.Icon size={16} color={link.active ? '#ffd700' : '#ffaa00'} />
+                                        <link.Icon size={16} color={link.active ? '#ffd700' : '#ffcc33'} />
                                         <Stack gap={0}>
                                             <Text size="12px" fw={600}>{link.label}</Text>
-                                            <Text size="9px" style={{ color: '#ffaa00', marginTop: rem(-2) }}>{link.subLabel}</Text>
+                                            <Text size="9px" style={{ color: '#ffcc33', marginTop: rem(-2) }}>{link.subLabel}</Text>
                                         </Stack>
                                         {link.active && <ChevronDown size={11} color="#ffd700" />}
                                     </Group>
@@ -105,7 +136,7 @@ const WuChangHeader = () => {
  
                         {/* Login + Burger */}
                         <Group gap="md">
-                            <Button radius="md" px="xl" fw={800} style={{ background: '#ffd700', color: '#990000', border: 'none' }}>
+                            <Button radius="md" px="xl" fw={800} style={{ background: '#ffd700', color: '#900000', border: 'none', fontSize: 15 }}>
                                 Login
                             </Button>
                             <Burger opened={opened} onClick={toggle} hiddenFrom="md" size="sm" color="#ffd700" />
@@ -116,13 +147,15 @@ const WuChangHeader = () => {
  
             <Drawer opened={opened} onClose={close} size="100%" padding="md" title="Menu"
                 styles={{
-                    content: { backgroundColor: '#cc0000' },
-                    header: { backgroundColor: '#990000', borderBottom: '2px solid #ffd700' },
+                    content: { backgroundColor: '#e00000' },
+                    header: { backgroundColor: '#900000', borderBottom: '2px solid #ffd700' },
                     title: { color: '#ffd700', fontWeight: 900 },
-                }}>
+                }}
+            >
                 <Stack gap="xs">
                     {NAV_LINKS.map((link) => (
-                        <UnstyledButton key={link.label} p="md" style={{ background: '#aa0000', borderRadius: 8, border: '1px solid #ffd700' }}>
+                        <UnstyledButton key={link.label} className="drawer-item" p="md"
+                            style={{ background: '#c00000', borderRadius: 8, border: '1px solid #ffd700' }}>
                             <Group>
                                 <link.Icon size={20} color="#ffd700" />
                                 <Text fw={700} style={{ color: '#ffd700' }}>{link.label}</Text>
@@ -134,76 +167,57 @@ const WuChangHeader = () => {
         </>
     );
 };
-
 // ==========================================
 // StockModal — popup
 // ==========================================
 
-const StockModal = ({
-    stock,
-    onClose,
-    onView,
-}: {
-    stock: Stock | null;
-    onClose: () => void;
-    onView: () => void;
+const StockModal = ({ stock, onClose, onView }: {
+    stock: Stock | null; onClose: () => void; onView: () => void;
 }) => {
     if (!stock) return null;
- 
     const isNeg = stock.change.startsWith('-');
     const changeColor = isNeg ? '#ff4444' : '#44ff88';
  
-    const row = (label: string, value: string, valueColor = '#ffd700') => (
-        <Group key={label} justify="space-between" px="xs">
-            <Text size="sm" style={{ color: '#ffaa00', minWidth: 60 }}>{label}</Text>
-            <Text size="sm" fw={700} style={{ color: valueColor }}>{value}</Text>
+    const detailRow = (label: string, value: string, color = '#ffd700') => (
+        <Group key={label} gap={8} wrap="nowrap">
+            <Text size="sm" fw={600} style={{ color: '#ffcc33', minWidth: 52 }}>{label}</Text>
+            <Text size="sm" fw={700} style={{ color }}>{value}</Text>
         </Group>
     );
  
     return (
-        <Modal
-            opened={!!stock}
-            onClose={onClose}
-            centered
-            withCloseButton={false}
-            radius="md"
-            size="sm"
+        <Modal opened={!!stock} onClose={onClose} centered withCloseButton={false}
+            radius="md" size="sm"
             styles={{
-                content: { background: '#aa0000', border: '2px solid #ffd700' },
+                content: { background: '#900000', border: '2px solid #ffd700' },
                 body: { padding: '24px 20px 20px' },
             }}>
-            {/* Stock name title */}
             <Text fw={900} size="xl" ta="center" mb="md" style={{ color: '#ffd700', letterSpacing: 1 }}>
                 {stock.name}
             </Text>
- 
-            {/* Details grid */}
-            <Stack gap={6} mb="xl">
-                <SimpleGrid cols={2} spacing="xs">
-                    {row('Open',   stock.open,   '#ff4444')}
-                    {row('Change', stock.change, changeColor)}
-                    {row('High',   stock.high)}
-                    {row('Last',   stock.last)}
-                    {row('Low',    stock.low)}
-                    {row('Vol',    stock.vol)}
-                </SimpleGrid>
-            </Stack>
- 
-            {/* Buttons */}
+
+            <SimpleGrid cols={2} spacing="xs" mb="xl">
+                <Stack gap={6}>
+                    {detailRow('Open',  stock.open,  '#ff4444')}
+                    {detailRow('High',  stock.high)}
+                    {detailRow('Low',   stock.low)}
+                </Stack>
+
+                <Stack gap={6}>
+                    {detailRow('Change', stock.change, changeColor)}
+                    {detailRow('Last',   stock.last)}
+                    {detailRow('Vol',    stock.vol)}
+                </Stack>
+            </SimpleGrid>
+
             <Group justify="center" gap="md">
-                <Button
-                    radius="xl"
-                    px="xl"
-                    fw={700}
-                    style={{ background: '#ffd700', color: '#990000', border: 'none', minWidth: 100 }}
+                <Button radius="xl" px="xl" fw={700}
+                    style={{ background: '#ffd700', color: '#900000', border: 'none', minWidth: 100 }}
                     onClick={onView}>
                     View
                 </Button>
-                <Button
-                    radius="xl"
-                    px="xl"
-                    fw={700}
-                    variant="outline"
+
+                <Button radius="xl" px="xl" fw={700} variant="outline"
                     style={{ borderColor: '#ffd700', color: '#ffd700', minWidth: 100 }}
                     onClick={onClose}>
                     Cancel
@@ -216,7 +230,9 @@ const StockModal = ({
 // ==========================================
 // StockTable Component
 // ==========================================
-const StockTable = ({ title, stocks, onRowClick, }: { title: string; stocks: Stock[]; onRowClick: (item: Stock) => void; }) => {
+const StockTable = ({ title, stocks, onRowClick, }: { 
+    title: string; stocks: Stock[]; onRowClick: (item: Stock) => void; 
+}) => {
     const [sortBy, setSortBy] = useState<StockKey | null>(null);
     const [reversed, setReversed] = useState(false);
 
@@ -238,83 +254,59 @@ const StockTable = ({ title, stocks, onRowClick, }: { title: string; stocks: Sto
     // const ptr: React.CSSProperties = { cursor: 'pointer' };
 
     return (
-        <Box style={{ borderRadius: 12, overflow: 'hidden', border: '2px solid #ffd700', background: '#aa0000' }}>
-             {/* Title bar */}
-            <Box px="md" py={10} style={{ background: '#770000', borderBottom: '2px solid #ffd700' }}>
+        <Box style={{ borderRadius: 12, overflow: 'hidden', border: '2px solid #ffd700', background: '#c00000' }}>
+            {/* Title bar */}
+            <Box px="md" py={10} style={{ background: '#700000', borderBottom: '2px solid #ffd700' }}>
                 <Text fw={900} size="sm" ta="center" style={{ color: '#ffd700', letterSpacing: 2 }}>{title}</Text>
             </Box>
  
-            <Table verticalSpacing="sm" highlightOnHover>
-                {/* <Table.Thead>
-                    <Table.Tr style={{ borderBottom: '1px solid #5a1818' }}>
-                        <Table.Th style={ptr} onClick={() => handleSort('name')}>
-                            <Text fw={700} size="xs" style={{ color: sortBy === 'name' ? '#ffd580' : '#8a4040' }}>STOCK {Icon('name')}</Text>
-                        </Table.Th>
-
-                        <Table.Th style={{ textAlign: 'right' }}>
-                            <Stack gap={0} align="flex-end">
-                                <Text fw={700} size="xs" style={{ ...ptr, color: sortBy === 'price' ? '#ffd580' : '#8a4040' }} onClick={() => handleSort('price')}>PRICE {Icon('price')}</Text>
-                                <Text size="10px" style={{ ...ptr, color: sortBy === 'nta' ? '#ffd580' : '#8a4040' }} onClick={() => handleSort('nta')}>NTA {Icon('nta')}</Text>
-                            </Stack>
-                        </Table.Th>
-
-                        <Table.Th style={{ textAlign: 'right' }}>
-                            <Stack gap={0} align="flex-end">
-                                <Text fw={700} size="xs" style={{ ...ptr, color: sortBy === 'percent' ? '#ffd580' : '#8a4040' }} onClick={() => handleSort('percent')}>C(%) {Icon('percent')}</Text>
-                                <Text size="10px" style={{ ...ptr, color: sortBy === 'chg' ? '#ffd580' : '#8a4040' }} onClick={() => handleSort('chg')}>CHG {Icon('chg')}</Text>
-                            </Stack>
-                        </Table.Th>
-                    </Table.Tr>
-                </Table.Thead> */}
- 
+            <Table verticalSpacing="sm">
                 <Table.Tbody>
                     {sortedData.map((item, i) => {
                         const isNeg = item.change.startsWith('-');
                         const changeColor = isNeg ? '#ff4444' : '#44ff88';
- 
                         return (
-                            <Table.Tr
-                                key={i}
-                                style={{ cursor: 'pointer', borderBottom: '1px solid #cc2200' }}
+                            <Table.Tr key={i} className="stock-row"
+                                style={{ cursor: 'pointer', borderBottom: '1px solid #e00000', background: i % 2 === 0 ? '#c00000' : '#b50000' }}
                                 onClick={() => onRowClick(item)}>
 
                                 <Table.Td style={{ minWidth: 70 }}>
                                     <Text fw={900} size="sm" style={{ color: '#ffd700' }}>{item.name}</Text>
                                 </Table.Td>
- 
+
                                 <Table.Td>
                                     <Stack gap={1}>
                                         <Group gap={6} wrap="nowrap">
-                                            <Text size="xs" style={{ color: '#ffaa00', minWidth: 30 }}>Open</Text>
+                                            <Text size="xs" style={{ color: '#ffcc33', minWidth: 30 }}>Open</Text>
                                             <Text size="xs" fw={700} style={{ color: '#ff4444' }}>{item.open}</Text>
                                         </Group>
 
                                         <Group gap={6} wrap="nowrap">
-                                            <Text size="xs" style={{ color: '#ffaa00', minWidth: 30 }}>High</Text>
+                                            <Text size="xs" style={{ color: '#ffcc33', minWidth: 30 }}>High</Text>
                                             <Text size="xs" fw={600} style={{ color: '#ffd700' }}>{item.high}</Text>
                                         </Group>
 
                                         <Group gap={6} wrap="nowrap">
-                                            <Text size="xs" style={{ color: '#ffaa00', minWidth: 30 }}>Low</Text>
+                                            <Text size="xs" style={{ color: '#ffcc33', minWidth: 30 }}>Low</Text>
                                             <Text size="xs" fw={600} style={{ color: '#ffd700' }}>{item.low}</Text>
                                         </Group>
                                     </Stack>
                                 </Table.Td>
- 
+
                                 <Table.Td>
                                     <Stack gap={1}>
                                         <Group gap={6} wrap="nowrap">
-                                            <Text size="xs" style={{ color: '#ffaa00', minWidth: 38 }}>Change</Text>
+                                            <Text size="xs" style={{ color: '#ffcc33', minWidth: 38 }}>Change</Text>
                                             <Text size="xs" fw={700} style={{ color: changeColor }}>{item.change}</Text>
                                         </Group>
 
                                         <Group gap={6} wrap="nowrap">
-                                            <Text size="xs" style={{ color: '#ffaa00', minWidth: 38 }}>Last</Text>
+                                            <Text size="xs" style={{ color: '#ffcc33', minWidth: 38 }}>Last</Text>
                                             <Text size="xs" fw={600} style={{ color: '#ffd700' }}>{item.last}</Text>
                                         </Group>
 
                                         <Group gap={6} wrap="nowrap">
-                                            <Text size="xs" style={{ color: '#ffaa00', minWidth: 38 }}>Vol</Text>
+                                            <Text size="xs" style={{ color: '#ffcc33', minWidth: 38 }}>Vol</Text>
                                             <Text size="xs" fw={600} style={{ color: '#ffd700' }}>{item.vol}</Text>
                                         </Group>
                                     </Stack>
@@ -371,7 +363,7 @@ export const LandingPage = () => {
     };
  
     return (
-        <Box style={{ minHeight: '100vh', background: '#cc0000' }}>
+        <Box style={{ minHeight: '100vh', background: '#e00000' }}>
             <WuChangHeader />
             <Container size="xl" py="xl">
                 <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="xl">
@@ -380,8 +372,6 @@ export const LandingPage = () => {
                     ))}
                 </SimpleGrid>
             </Container>
- 
-            {/* Global popup — one for all tables */}
             <StockModal stock={selectedStock} onClose={handleClose} onView={handleView} />
         </Box>
     );
