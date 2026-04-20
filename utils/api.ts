@@ -1168,15 +1168,15 @@ export const loginApi = async (email: string, password: string) => {
 export const getStockList = async () => {
   try {
     const mockJson = [
-      { name: '5ER',    price: '0.275',  nta: '0.090',  percent: '+5.80%', chg: '+0.015' },
-      { name: 'AAX',    price: '1.230',  nta: '1.161',  percent: '+3.40%', chg: '+0.040' },
-      { name: 'SUNMED', price: '1.870',  nta: '0.220',  percent: '+0.50%', chg: '+0.010' },
-      { name: 'ZETRIX', price: '0.785',  nta: '48.020', percent: '+1.90%', chg: '+0.015' },
-      { name: 'IOIPG',  price: '3.880',  nta: '4.530',  percent: '+2.90%', chg: '+0.110' },
-      { name: 'CIMB',   price: '7.500',  nta: '6.520',  percent: '-0.70%', chg: '-0.050' },
-      { name: 'GAMUDA', price: '4.130',  nta: '2.130',  percent: '+1.50%', chg: '+0.060' },
-      { name: 'PBBANK', price: '4.600',  nta: '3.103',  percent: '-0.90%', chg: '-0.040' },
-      { name: 'TENAGA', price: '14.140', nta: '8.713',  percent: '-1.30%', chg: '-0.180' },
+      { name: '5ER',    price: '0.275',  nta: '0.090',  percent: '+5.80%', chg: '+0.015', open: '-600', high: 'RM 10.10', low: '298.000', change: '+91.90%', last: 'RM 10.90', vol: '194.000' },
+      { name: 'AAX',    price: '1.230',  nta: '1.161',  percent: '+3.40%', chg: '+0.040', open: '-100', high: 'RM 25.20', low: '300.000', change: '+82.80%', last: 'RM 20.80', vol: '285.000' },
+      { name: 'SUNMED', price: '1.870',  nta: '0.220',  percent: '+0.50%', chg: '+0.010', open: '-200', high: 'RM 30.10', low: '100.000', change: '+73.70%', last: 'RM 30.70', vol: '376.000' },
+      { name: 'ZETRIX', price: '0.785',  nta: '48.020', percent: '+1.90%', chg: '+0.015', open: '-300', high: 'RM 13.90', low: '400.000', change: '+64.60%', last: 'RM 40.60', vol: '467.000' },
+      { name: 'IOIPG',  price: '3.880',  nta: '4.530',  percent: '+2.90%', chg: '+0.110', open: '-400', high: 'RM 15.80', low: '500.000', change: '+55.50%', last: 'RM 50.50', vol: '558.000' },
+      { name: 'CIMB',   price: '7.500',  nta: '6.520',  percent: '-0.70%', chg: '-0.050', open: '-500', high: 'RM 90.70', low: '600.000', change: '+46.40%', last: 'RM 60.40', vol: '649.000' },
+      { name: 'GAMUDA', price: '4.130',  nta: '2.130',  percent: '+1.50%', chg: '+0.060', open: '-600', high: 'RM 80.60', low: '700.000', change: '+37.30%', last: 'RM 70.30', vol: '731.000' },
+      { name: 'PBBANK', price: '4.600',  nta: '3.103',  percent: '-0.90%', chg: '-0.040', open: '-700', high: 'RM 75.40', low: '900.000', change: '+28.20%', last: 'RM 80.20', vol: '822.000' },
+      { name: 'TENAGA', price: '14.140', nta: '8.713',  percent: '-1.30%', chg: '-0.180', open: '-800', high: 'RM 23.30', low: '800.000', change: '+19.10%', last: 'RM 90.10', vol: '913.000' },
     ];
 
     console.log('getStockList mock:', mockJson);

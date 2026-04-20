@@ -27,6 +27,12 @@ interface Stock {
     nta: string;
     percent: string;
     chg: string;
+    open: string,
+    high: string, 
+    low: string, 
+    change: string,
+    last: string,
+    vol: string,
 }
 
 type StockKey = keyof Stock;
@@ -153,6 +159,7 @@ const StockTable = ({ title, stocks }: { title: string; stocks: Stock[] }) => {
             nta: item.nta, 
             percent: item.percent, 
             chg: item.chg,
+            open: item.open,
         }).toString();
         router.push(`/stock/${item.name}?${params}`);
     };
@@ -175,8 +182,8 @@ const StockTable = ({ title, stocks }: { title: string; stocks: Stock[] }) => {
                 <Text fw={800} size="sm" ta="center" style={{ color: '#ffd580', letterSpacing: 1 }}>{title}</Text>
             </Box>
  
-            <Table verticalSpacing="md" highlightOnHover>
-                <Table.Thead>
+            <Table verticalSpacing="sm" highlightOnHover>
+                {/* <Table.Thead>
                     <Table.Tr style={{ borderBottom: '1px solid #5a1818' }}>
                         <Table.Th style={ptr} onClick={() => handleSort('name')}>
                             <Text fw={700} size="xs" style={{ color: sortBy === 'name' ? '#ffd580' : '#8a4040' }}>STOCK {Icon('name')}</Text>
@@ -196,29 +203,60 @@ const StockTable = ({ title, stocks }: { title: string; stocks: Stock[] }) => {
                             </Stack>
                         </Table.Th>
                     </Table.Tr>
-                </Table.Thead>
+                </Table.Thead> */}
  
                 <Table.Tbody>
                     {sortedData.map((item, i) => {
                         const isNeg = item.percent.startsWith('-');
-                        const color = isNeg ? '#e03030' : '#ffd580';
+                        const changeColor = isNeg ? '#e03030' : '#7dd87d';
                         return (
-                            <Table.Tr key={i} style={{ cursor: 'pointer', borderBottom: '1px solid #3d1414' }} onClick={() => handleRowClick(item)}>
-                                <Table.Td>
-                                    <Text fw={700} style={{ color: '#ffd580' }}>{item.name}</Text>
-                                </Table.Td>
+                            <Table.Tr
+                                key={i}
+                                style={{ cursor: 'pointer', borderBottom: '1px solid #3d1414' }}
+                                onClick={() => handleRowClick(item)}>
 
-                                <Table.Td style={{ textAlign: 'right' }}>
-                                    <Stack gap={0} align="flex-end">
-                                        <Text fw={600} size="sm" style={{ color: '#f5e6a8' }}>{item.price}</Text>
-                                        <Text size="xs" style={{ color: '#8a4040' }}>{item.nta}</Text>
+                                {/* Col 1: Stock name */}
+                                <Table.Td style={{ minWidth: 70 }}>
+                                    <Text fw={800} size="sm" style={{ color: '#ffd580' }}>{item.name}</Text>
+                                </Table.Td>
+ 
+                                {/* Col 2: Open (red) / High (yellow) / Low (yellow) — with labels */}
+                                <Table.Td>
+                                    <Stack gap={1}>
+                                        <Group gap={6} wrap="nowrap">
+                                            <Text size="xs" style={{ color: '#8a4040', minWidth: 30 }}>Open</Text>
+                                            <Text size="xs" fw={600} style={{ color: '#e03030' }}>{item.open}</Text>
+                                        </Group>
+
+                                        <Group gap={6} wrap="nowrap">
+                                            <Text size="xs" style={{ color: '#8a4040', minWidth: 30 }}>High</Text>
+                                            <Text size="xs" fw={600} style={{ color: '#ffd580' }}>{item.high}</Text>
+                                        </Group>
+
+                                        <Group gap={6} wrap="nowrap">
+                                            <Text size="xs" style={{ color: '#8a4040', minWidth: 30 }}>Low</Text>
+                                            <Text size="xs" fw={600} style={{ color: '#ffd580' }}>{item.low}</Text>
+                                        </Group>
                                     </Stack>
                                 </Table.Td>
+ 
+                                {/* Col 3: Change (green/red) / Last (yellow) / Vol (yellow) — with labels */}
+                                <Table.Td>
+                                    <Stack gap={1}>
+                                        <Group gap={6} wrap="nowrap">
+                                            <Text size="xs" style={{ color: '#8a4040', minWidth: 38 }}>Change</Text>
+                                            <Text size="xs" fw={700} style={{ color: changeColor }}>{item.change}</Text>
+                                        </Group>
 
-                                <Table.Td style={{ textAlign: 'right' }}>
-                                    <Stack gap={0} align="flex-end">
-                                        <Text fw={700} size="sm" style={{ color }}>{item.percent}</Text>
-                                        <Text size="xs" style={{ color }}>{item.chg}</Text>
+                                        <Group gap={6} wrap="nowrap">
+                                            <Text size="xs" style={{ color: '#8a4040', minWidth: 38 }}>Last</Text>
+                                            <Text size="xs" fw={600} style={{ color: '#ffd580' }}>{item.last}</Text>
+                                        </Group>
+
+                                        <Group gap={6} wrap="nowrap">
+                                            <Text size="xs" style={{ color: '#8a4040', minWidth: 38 }}>Vol</Text>
+                                            <Text size="xs" fw={600} style={{ color: '#ffd580' }}>{item.vol}</Text>
+                                        </Group>
                                     </Stack>
                                 </Table.Td>
                             </Table.Tr>
