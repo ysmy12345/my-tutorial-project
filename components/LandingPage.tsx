@@ -60,11 +60,11 @@ const WuChangHeader = () => {
     const [opened, { toggle, close }] = useDisclosure(false);
 
     const getLinkStyle = (active?: boolean): React.CSSProperties => ({
-        color: active ? '#ffd580' : '#8a4040',
+        color: active ? '#ffd700' : '#ffaa00',
         padding: `${rem(6)} ${rem(10)}`,
         borderRadius: rem(8),
-        border: active ? '1px solid rgba(255,213,128,0.45)' : '1px solid transparent',
-        backgroundColor: active ? 'rgba(255,213,128,0.08)' : 'transparent',
+        border: active ? '1px solid rgba(255,215,0,0.6)' : '1px solid transparent',
+        backgroundColor: active ? 'rgba(255,215,0,0.12)' : 'transparent',
         transition: 'all 0.2s ease',
         cursor: 'pointer',
         display: 'flex',
@@ -73,44 +73,44 @@ const WuChangHeader = () => {
 
     return (
         <>
-            <Box bg="#2e1010" style={{ borderBottom: '1px solid #7a2020', position: 'sticky', top: 0, zIndex: 1000 }}>
+            <Box style={{ background: '#990000', borderBottom: '2px solid #ffd700', position: 'sticky', top: 0, zIndex: 1000 }}>
                 <Container size="xl" h={rem(70)}>
                     <Group justify="space-between" h="100%" wrap="nowrap">
+                        {/* Logo */}
                         <Group gap="sm" wrap="nowrap">
-                            <Center bg="#3d1414" style={{ borderRadius: '50%', width: 42, height: 42, border: '2px solid #e03030' }}>
+                            <Center style={{ borderRadius: '50%', width: 42, height: 42, border: '2px solid #ffd700', background: '#770000' }}>
                                 <img src="https://api.dicebear.com/7.x/bottts/svg?seed=wuchang" alt="Logo" width={28} />
                             </Center>
-
                             <Stack gap={0} visibleFrom="xs">
-                                <Text fw={800} size="lg" style={{ letterSpacing: '0.5px', lineHeight: 1.2, color: '#ffd580' }}>WuChang 無常</Text>
-                                <Text size="10px" fw={500} style={{ color: '#8a4040' }}>THE NO.1 AI FINANCIAL PLATFORM</Text>
+                                <Text fw={900} size="lg" style={{ letterSpacing: '0.5px', lineHeight: 1.2, color: '#ffd700' }}>WuChang 無常</Text>
+                                <Text size="10px" fw={600} style={{ color: '#ffaa00' }}>THE NO.1 AI FINANCIAL PLATFORM</Text>
                             </Stack>
                         </Group>
  
+                        {/* Nav */}
                         <Group gap={rem(2)} visibleFrom="md" wrap="nowrap">
                             {NAV_LINKS.map((link) => (
                                 <UnstyledButton key={link.label} style={getLinkStyle(link.active)}>
                                     <Group gap="xs" wrap="nowrap">
-                                        <link.Icon size={16} color={link.active ? '#ffd580' : '#7a2020'} />
+                                        <link.Icon size={16} color={link.active ? '#ffd700' : '#ffaa00'} />
                                         <Stack gap={0}>
                                             <Text size="12px" fw={600}>{link.label}</Text>
-                                            <Text size="9px" style={{ color: '#7a3030', marginTop: rem(-2) }}>{link.subLabel}</Text>
+                                            <Text size="9px" style={{ color: '#ffaa00', marginTop: rem(-2) }}>{link.subLabel}</Text>
                                         </Stack>
-                                        {link.active && <ChevronDown size={11} color="#c4972a" />}
+                                        {link.active && <ChevronDown size={11} color="#ffd700" />}
                                     </Group>
                                 </UnstyledButton>
                             ))}
                         </Group>
  
+                        {/* Login + Burger */}
                         <Group gap="md">
                             <Button
-                                variant="gradient"
-                                gradient={{ from: '#8b0000', to: '#e03030' }}
-                                radius="md" px="xl" fw={700}
-                                style={{ border: '1px solid #ffd58040', color: '#ffd580' }}>
+                                radius="md" px="xl" fw={800}
+                                style={{ background: '#ffd700', color: '#990000', border: 'none' }}>
                                 Login
                             </Button>
-                            <Burger opened={opened} onClick={toggle} hiddenFrom="md" size="sm" color="#c4972a" />
+                            <Burger opened={opened} onClick={toggle} hiddenFrom="md" size="sm" color="#ffd700" />
                         </Group>
                     </Group>
                 </Container>
@@ -118,17 +118,17 @@ const WuChangHeader = () => {
  
             <Drawer opened={opened} onClose={close} size="100%" padding="md" title="Menu"
                 styles={{
-                    content: { backgroundColor: '#1c0a0a' },
-                    header: { backgroundColor: '#1c0a0a', borderBottom: '1px solid #7a2020' },
-                    title: { color: '#ffd580', fontWeight: 700 },
+                    content: { backgroundColor: '#cc0000' },
+                    header: { backgroundColor: '#990000', borderBottom: '2px solid #ffd700' },
+                    title: { color: '#ffd700', fontWeight: 900 },
                 }}
             >
                 <Stack gap="xs">
                     {NAV_LINKS.map((link) => (
-                        <UnstyledButton key={link.label} p="md" bg="#2e1010" style={{ borderRadius: 8, border: '1px solid #7a2020' }}>
+                        <UnstyledButton key={link.label} p="md" style={{ background: '#aa0000', borderRadius: 8, border: '1px solid #ffd700' }}>
                             <Group>
-                                <link.Icon size={20} color="#e03030" />
-                                <Text fw={600} style={{ color: '#ffd580' }}>{link.label}</Text>
+                                <link.Icon size={20} color="#ffd700" />
+                                <Text fw={700} style={{ color: '#ffd700' }}>{link.label}</Text>
                             </Group>
                         </UnstyledButton>
                     ))}
@@ -177,9 +177,10 @@ const StockTable = ({ title, stocks }: { title: string; stocks: Stock[] }) => {
     const ptr: React.CSSProperties = { cursor: 'pointer' };
 
     return (
-        <Box bg="#2e1010" style={{ borderRadius: 12, overflow: 'hidden', border: '1px solid #7a2020' }}>
-            <Box px="md" py={10} style={{ background: 'linear-gradient(90deg, #7a1010 0%, #a02020 100%)', borderBottom: '1px solid #7a2020' }}>
-                <Text fw={800} size="sm" ta="center" style={{ color: '#ffd580', letterSpacing: 1 }}>{title}</Text>
+        <Box style={{ borderRadius: 12, overflow: 'hidden', border: '2px solid #ffd700', background: '#aa0000' }}>
+             {/* Title bar */}
+            <Box px="md" py={10} style={{ background: '#770000', borderBottom: '2px solid #ffd700' }}>
+                <Text fw={900} size="sm" ta="center" style={{ color: '#ffd700', letterSpacing: 2 }}>{title}</Text>
             </Box>
  
             <Table verticalSpacing="sm" highlightOnHover>
@@ -207,55 +208,56 @@ const StockTable = ({ title, stocks }: { title: string; stocks: Stock[] }) => {
  
                 <Table.Tbody>
                     {sortedData.map((item, i) => {
-                        const isNeg = item.percent.startsWith('-');
-                        const changeColor = isNeg ? '#e03030' : '#7dd87d';
+                        const isNeg = item.change.startsWith('-');
+                        const changeColor = isNeg ? '#ff4444' : '#44ff88';
+
                         return (
                             <Table.Tr
                                 key={i}
-                                style={{ cursor: 'pointer', borderBottom: '1px solid #3d1414' }}
+                                style={{ cursor: 'pointer', borderBottom: '1px solid #cc2200' }}
                                 onClick={() => handleRowClick(item)}>
 
                                 {/* Col 1: Stock name */}
                                 <Table.Td style={{ minWidth: 70 }}>
-                                    <Text fw={800} size="sm" style={{ color: '#ffd580' }}>{item.name}</Text>
+                                    <Text fw={900} size="sm" style={{ color: '#ffd700' }}>{item.name}</Text>
                                 </Table.Td>
  
-                                {/* Col 2: Open (red) / High (yellow) / Low (yellow) — with labels */}
+                                {/* Col 2: Open(red) / High(gold) / Low(gold) */}
                                 <Table.Td>
                                     <Stack gap={1}>
                                         <Group gap={6} wrap="nowrap">
-                                            <Text size="xs" style={{ color: '#8a4040', minWidth: 30 }}>Open</Text>
-                                            <Text size="xs" fw={600} style={{ color: '#e03030' }}>{item.open}</Text>
+                                            <Text size="xs" style={{ color: '#ffaa00', minWidth: 30 }}>Open</Text>
+                                            <Text size="xs" fw={700} style={{ color: '#ff4444' }}>{item.open}</Text>
                                         </Group>
 
                                         <Group gap={6} wrap="nowrap">
-                                            <Text size="xs" style={{ color: '#8a4040', minWidth: 30 }}>High</Text>
-                                            <Text size="xs" fw={600} style={{ color: '#ffd580' }}>{item.high}</Text>
+                                            <Text size="xs" style={{ color: '#ffaa00', minWidth: 30 }}>High</Text>
+                                            <Text size="xs" fw={600} style={{ color: '#ffd700' }}>{item.high}</Text>
                                         </Group>
 
                                         <Group gap={6} wrap="nowrap">
-                                            <Text size="xs" style={{ color: '#8a4040', minWidth: 30 }}>Low</Text>
-                                            <Text size="xs" fw={600} style={{ color: '#ffd580' }}>{item.low}</Text>
+                                            <Text size="xs" style={{ color: '#ffaa00', minWidth: 30 }}>Low</Text>
+                                            <Text size="xs" fw={600} style={{ color: '#ffd700' }}>{item.low}</Text>
                                         </Group>
                                     </Stack>
                                 </Table.Td>
  
-                                {/* Col 3: Change (green/red) / Last (yellow) / Vol (yellow) — with labels */}
+                                {/* Col 3: Change(green/red) / Last(gold) / Vol(gold) */}
                                 <Table.Td>
                                     <Stack gap={1}>
                                         <Group gap={6} wrap="nowrap">
-                                            <Text size="xs" style={{ color: '#8a4040', minWidth: 38 }}>Change</Text>
+                                            <Text size="xs" style={{ color: '#ffaa00', minWidth: 38 }}>Change</Text>
                                             <Text size="xs" fw={700} style={{ color: changeColor }}>{item.change}</Text>
                                         </Group>
 
                                         <Group gap={6} wrap="nowrap">
-                                            <Text size="xs" style={{ color: '#8a4040', minWidth: 38 }}>Last</Text>
-                                            <Text size="xs" fw={600} style={{ color: '#ffd580' }}>{item.last}</Text>
+                                            <Text size="xs" style={{ color: '#ffaa00', minWidth: 38 }}>Last</Text>
+                                            <Text size="xs" fw={600} style={{ color: '#ffd700' }}>{item.last}</Text>
                                         </Group>
 
                                         <Group gap={6} wrap="nowrap">
-                                            <Text size="xs" style={{ color: '#8a4040', minWidth: 38 }}>Vol</Text>
-                                            <Text size="xs" fw={600} style={{ color: '#ffd580' }}>{item.vol}</Text>
+                                            <Text size="xs" style={{ color: '#ffaa00', minWidth: 38 }}>Vol</Text>
+                                            <Text size="xs" fw={600} style={{ color: '#ffd700' }}>{item.vol}</Text>
                                         </Group>
                                     </Stack>
                                 </Table.Td>
@@ -288,7 +290,7 @@ export const LandingPage = () => {
     }, []);
  
     return (
-        <Box style={{ minHeight: '100vh', background: '#1c0a0a' }}>
+        <Box style={{ minHeight: '100vh', background: '#cc0000' }}>
             <WuChangHeader />
             <Container size="xl" py="xl">
                 <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="xl">

@@ -36,14 +36,13 @@ function StockDetail() {
  
     const meta     = STOCK_META[name] ?? FALLBACK_META;
     const isNeg    = percent.startsWith('-');
-    // positive: gold box  |  negative: red box
-    const accent   = isNeg ? '#e03030' : '#7dd87d';
-    const accentBg = isNeg ? 'rgba(224,48,48,0.18)' : 'rgba(255,213,128,0.12)';
+    const accent   = isNeg ? '#ff4444' : '#44ff88';
+    const accentBg = isNeg ? 'rgba(255,68,68,0.25)' : 'rgba(68,255,136,0.18)';
  
     const statPill = (label: string, value: string) => (
         <div key={label} style={{
-            background: '#3d1414',
-            border: '1px solid #7a2020',
+            background: '#770000',
+            border: '1px solid #ffd700',
             borderRadius: 7,
             padding: '5px 14px',
             fontSize: 13,
@@ -51,68 +50,45 @@ function StockDetail() {
             display: 'flex',
             gap: 6,
             alignItems: 'center',
-            fontFamily: "'IBM Plex Mono', monospace",
         }}>
-            <span style={{ color: '#8a4040' }}>{label}</span>
-            <span style={{ color: '#ffd580', fontWeight: 700 }}>{value}</span>
+            <span style={{ color: '#ffaa00' }}>{label}</span>
+            <span style={{ color: '#ffd700', fontWeight: 700 }}>{value}</span>
         </div>
     );
  
     return (
-        <div style={{ minHeight: '100vh', background: '#1c0a0a', fontFamily: "'IBM Plex Mono', monospace" }}>
+        <div style={{ minHeight: '100vh', background: '#cc0000' }}>
+            {/* Header */}
+            <div style={{ background: '#aa0000', borderBottom: '2px solid #ffd700', padding: '0 20px' }}>
  
-            {/* ── Header ── */}
-            <div style={{ background: '#2e1010', borderBottom: '1px solid #7a2020', padding: '0 20px' }}>
-
-                {/* Top row: always single line on desktop, wraps on mobile */}
+                {/* Top row */}
                 <div style={{
-                    display: 'flex', 
-                    alignItems: 'center',
-                    justifyContent: 'space-between', 
-                    flexWrap: 'wrap',
-                    gap: '8px 16px', 
-                    padding: '14px 0 8px',
+                    display: 'flex', alignItems: 'center',
+                    justifyContent: 'space-between', flexWrap: 'wrap',
+                    gap: '8px 16px', padding: '14px 0 8px',
                 }}>
-                    {/* ── Left: back + name + code + badge ── */}
+                    {/* Left */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', minWidth: 0 }}>
-
                         <button onClick={() => router.back()} style={{
-                            background: 'none', 
-                            border: 'none', 
-                            color: '#c4972a',
-                            fontSize: 28, 
-                            cursor: 'pointer', 
-                            padding: 0, 
-                            lineHeight: 1, 
-                            flexShrink: 0,
+                            background: 'none', border: 'none', color: '#ffd700',
+                            fontSize: 28, cursor: 'pointer', padding: 0, lineHeight: 1, flexShrink: 0,
                         }}>‹</button>
  
-                        <span style={{ fontSize: 26, fontWeight: 900, color: '#ffd580', letterSpacing: 1 }}>{name}</span>
- 
-                        <span style={{ fontSize: 15, fontWeight: 700, color: '#e03030' }}>{meta.code}</span>
- 
+                        <span style={{ fontSize: 26, fontWeight: 900, color: '#ffd700', letterSpacing: 1 }}>{name}</span>
+                        <span style={{ fontSize: 15, fontWeight: 700, color: '#ffaa00' }}>{meta.code}</span>
                         <span style={{
-                            fontSize: 12, 
-                            fontWeight: 600, 
-                            color: '#ffd580',
-                            background: '#3d1414', 
-                            border: '1px solid #7a2020',
-                            borderRadius: 5, 
-                            padding: '2px 10px',
+                            fontSize: 12, fontWeight: 700, color: '#990000',
+                            background: '#ffd700', borderRadius: 5, padding: '2px 10px',
                         }}>{meta.market}</span>
                     </div>
  
-                    {/* ── Right: price + chg/percenet ── */}
+                    {/* Right */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexShrink: 0 }}>
-                        <span style={{ fontSize: 34, fontWeight: 900, color: '#ffd580', letterSpacing: -0.5 }}>{price}</span>
-
+                        <span style={{ fontSize: 34, fontWeight: 900, color: '#ffd700', letterSpacing: -0.5 }}>{price}</span>
                         <div style={{
-                            background: accentBg,
-                            border: `1px solid ${accent}`,
-                            borderRadius: 8,
-                            padding: '6px 16px',
-                            textAlign: 'center',
-                            minWidth: 72,
+                            background: accentBg, border: `2px solid ${accent}`,
+                            borderRadius: 8, padding: '6px 16px',
+                            textAlign: 'center', minWidth: 72,
                         }}>
                             <div style={{ fontSize: 15, fontWeight: 700, color: accent, lineHeight: 1.4 }}>{chg}</div>
                             <div style={{ fontSize: 12, fontWeight: 600, color: accent, lineHeight: 1.4 }}>{percent}</div>
@@ -120,12 +96,12 @@ function StockDetail() {
                     </div>
                 </div>
  
-                {/* Sector — below name on all sizes */}
-                <div style={{ fontSize: 12, color: '#8a4040', paddingBottom: 10, paddingLeft: 42 }}>
+                {/* Sector */}
+                <div style={{ fontSize: 12, color: '#ffaa00', paddingBottom: 10, paddingLeft: 42 }}>
                     {meta.sector}
                 </div>
  
-                {/* Stats pills row */}
+                {/* Stats pills */}
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, paddingBottom: 14 }}>
                     {statPill('Vol',  meta.vol)}
                     {statPill('MCap', meta.mcap)}
@@ -135,8 +111,8 @@ function StockDetail() {
                 </div>
             </div>
  
-            {/* ── Body ─────────────────────────────────────────────── */}
-            <div style={{ padding: '24px 20px', color: '#8a4040', fontSize: 13 }}>
+            {/* Body */}
+            <div style={{ padding: '24px 20px', color: '#ffaa00', fontSize: 13 }}>
                 Chart / detail content goes here
             </div>
         </div>
