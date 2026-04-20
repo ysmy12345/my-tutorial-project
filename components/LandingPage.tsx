@@ -1,5 +1,5 @@
 "use client";
-import { Group, Stack, Text, Table, SimpleGrid, Box, UnstyledButton, Center, Burger, Drawer, Container, rem, Button } from '@mantine/core';
+import { Group, Stack, Text, Table, SimpleGrid, Box, UnstyledButton, Center, Burger, Drawer, Container, rem, Button, Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -7,7 +7,7 @@ import { TrendingUp, Coins, BarChart3, Bot, Zap, Sparkles, Building2, ChevronDow
 import { getStockList } from '../utils/api'; // ← call the new function
 
 // ==========================================
-// 1. Types & Config
+// Types & Config
 // ==========================================
 /*const stocks = [
     { name: '5ER',    price: '0.275',  nta: '0.090',  percent: '+5.80%', chg: '+0.015' },
@@ -54,7 +54,7 @@ const NAV_LINKS = [
 ]; 
 
 // ==========================================
-// 2. WuChangHeader Component
+// WuChangHeader Component
 // ==========================================
 const WuChangHeader = () => {
     const [opened, { toggle, close }] = useDisclosure(false);
@@ -105,9 +105,7 @@ const WuChangHeader = () => {
  
                         {/* Login + Burger */}
                         <Group gap="md">
-                            <Button
-                                radius="md" px="xl" fw={800}
-                                style={{ background: '#ffd700', color: '#990000', border: 'none' }}>
+                            <Button radius="md" px="xl" fw={800} style={{ background: '#ffd700', color: '#990000', border: 'none' }}>
                                 Login
                             </Button>
                             <Burger opened={opened} onClick={toggle} hiddenFrom="md" size="sm" color="#ffd700" />
@@ -121,8 +119,7 @@ const WuChangHeader = () => {
                     content: { backgroundColor: '#cc0000' },
                     header: { backgroundColor: '#990000', borderBottom: '2px solid #ffd700' },
                     title: { color: '#ffd700', fontWeight: 900 },
-                }}
-            >
+                }}>
                 <Stack gap="xs">
                     {NAV_LINKS.map((link) => (
                         <UnstyledButton key={link.label} p="md" style={{ background: '#aa0000', borderRadius: 8, border: '1px solid #ffd700' }}>
@@ -139,29 +136,93 @@ const WuChangHeader = () => {
 };
 
 // ==========================================
-// 3. StockTable Component
+// StockModal — popup
 // ==========================================
-const StockTable = ({ title, stocks }: { title: string; stocks: Stock[] }) => {
-    const router = useRouter();
+
+const StockModal = ({
+    stock,
+    onClose,
+    onView,
+}: {
+    stock: Stock | null;
+    onClose: () => void;
+    onView: () => void;
+}) => {
+    if (!stock) return null;
+ 
+    const isNeg = stock.change.startsWith('-');
+    const changeColor = isNeg ? '#ff4444' : '#44ff88';
+ 
+    const row = (label: string, value: string, valueColor = '#ffd700') => (
+        <Group key={label} justify="space-between" px="xs">
+            <Text size="sm" style={{ color: '#ffaa00', minWidth: 60 }}>{label}</Text>
+            <Text size="sm" fw={700} style={{ color: valueColor }}>{value}</Text>
+        </Group>
+    );
+ 
+    return (
+        <Modal
+            opened={!!stock}
+            onClose={onClose}
+            centered
+            withCloseButton={false}
+            radius="md"
+            size="sm"
+            styles={{
+                content: { background: '#aa0000', border: '2px solid #ffd700' },
+                body: { padding: '24px 20px 20px' },
+            }}>
+            {/* Stock name title */}
+            <Text fw={900} size="xl" ta="center" mb="md" style={{ color: '#ffd700', letterSpacing: 1 }}>
+                {stock.name}
+            </Text>
+ 
+            {/* Details grid */}
+            <Stack gap={6} mb="xl">
+                <SimpleGrid cols={2} spacing="xs">
+                    {row('Open',   stock.open,   '#ff4444')}
+                    {row('Change', stock.change, changeColor)}
+                    {row('High',   stock.high)}
+                    {row('Last',   stock.last)}
+                    {row('Low',    stock.low)}
+                    {row('Vol',    stock.vol)}
+                </SimpleGrid>
+            </Stack>
+ 
+            {/* Buttons */}
+            <Group justify="center" gap="md">
+                <Button
+                    radius="xl"
+                    px="xl"
+                    fw={700}
+                    style={{ background: '#ffd700', color: '#990000', border: 'none', minWidth: 100 }}
+                    onClick={onView}>
+                    View
+                </Button>
+                <Button
+                    radius="xl"
+                    px="xl"
+                    fw={700}
+                    variant="outline"
+                    style={{ borderColor: '#ffd700', color: '#ffd700', minWidth: 100 }}
+                    onClick={onClose}>
+                    Cancel
+                </Button>
+            </Group>
+        </Modal>
+    );
+};
+
+// ==========================================
+// StockTable Component
+// ==========================================
+const StockTable = ({ title, stocks, onRowClick, }: { title: string; stocks: Stock[]; onRowClick: (item: Stock) => void; }) => {
     const [sortBy, setSortBy] = useState<StockKey | null>(null);
     const [reversed, setReversed] = useState(false);
 
     const handleSort = (field: StockKey) => {
         setReversed(sortBy === field ? !reversed : false);
         setSortBy(field);
-    };
-
-    // link to app/stock/[name]
-    const handleRowClick = (item: Stock) => {
-        const params = new URLSearchParams({
-            name: item.name, 
-            price: item.price,
-            nta: item.nta, 
-            percent: item.percent, 
-            chg: item.chg,
-            open: item.open,
-        }).toString();
-        router.push(`/stock/${item.name}?${params}`);
     };
 
     const sortedData = [...stocks].sort((a, b) => {
@@ -173,8 +234,8 @@ const StockTable = ({ title, stocks }: { title: string; stocks: Stock[] }) => {
         return reversed ? -cmp : cmp;
     });
 
-    const Icon = (field: StockKey) => sortBy === field ? (reversed ? '↓' : '↑') : '↕';
-    const ptr: React.CSSProperties = { cursor: 'pointer' };
+    // const Icon = (field: StockKey) => sortBy === field ? (reversed ? '↓' : '↑') : '↕';
+    // const ptr: React.CSSProperties = { cursor: 'pointer' };
 
     return (
         <Box style={{ borderRadius: 12, overflow: 'hidden', border: '2px solid #ffd700', background: '#aa0000' }}>
@@ -210,19 +271,17 @@ const StockTable = ({ title, stocks }: { title: string; stocks: Stock[] }) => {
                     {sortedData.map((item, i) => {
                         const isNeg = item.change.startsWith('-');
                         const changeColor = isNeg ? '#ff4444' : '#44ff88';
-
+ 
                         return (
                             <Table.Tr
                                 key={i}
                                 style={{ cursor: 'pointer', borderBottom: '1px solid #cc2200' }}
-                                onClick={() => handleRowClick(item)}>
+                                onClick={() => onRowClick(item)}>
 
-                                {/* Col 1: Stock name */}
                                 <Table.Td style={{ minWidth: 70 }}>
                                     <Text fw={900} size="sm" style={{ color: '#ffd700' }}>{item.name}</Text>
                                 </Table.Td>
  
-                                {/* Col 2: Open(red) / High(gold) / Low(gold) */}
                                 <Table.Td>
                                     <Stack gap={1}>
                                         <Group gap={6} wrap="nowrap">
@@ -242,7 +301,6 @@ const StockTable = ({ title, stocks }: { title: string; stocks: Stock[] }) => {
                                     </Stack>
                                 </Table.Td>
  
-                                {/* Col 3: Change(green/red) / Last(gold) / Vol(gold) */}
                                 <Table.Td>
                                     <Stack gap={1}>
                                         <Group gap={6} wrap="nowrap">
@@ -271,10 +329,12 @@ const StockTable = ({ title, stocks }: { title: string; stocks: Stock[] }) => {
 };
 
 // ==========================================
-// 4. LandingPage
+// LandingPage
 // ==========================================
 export const LandingPage = () => {
+    const router = useRouter();
     const [stocks, setStocks] = useState<Stock[]>([]);
+    const [selectedStock, setSelectedStock] = useState<Stock | null>(null);
  
     // Call getStockList once on mount
     useEffect(() => {
@@ -288,6 +348,27 @@ export const LandingPage = () => {
         };
         fetchStocks();
     }, []);
+
+    const handleRowClick = (item: Stock) => {
+        setSelectedStock(item); // open popup
+    };
+ 
+    const handleClose = () => {
+        setSelectedStock(null); // close popup
+    };
+
+    const handleView = () => {
+        if (!selectedStock) return;
+        const params = new URLSearchParams({
+            name:    selectedStock.name,
+            price:   selectedStock.price,
+            nta:     selectedStock.nta,
+            percent: selectedStock.percent,
+            chg:     selectedStock.chg,
+            open:    selectedStock.open,
+        }).toString();
+        router.push(`/stock/${selectedStock.name}?${params}`);
+    };
  
     return (
         <Box style={{ minHeight: '100vh', background: '#cc0000' }}>
@@ -295,10 +376,13 @@ export const LandingPage = () => {
             <Container size="xl" py="xl">
                 <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="xl">
                     {TABLE_CONFIG.map(t => (
-                        <StockTable key={t.title} title={t.title} stocks={stocks} />
+                        <StockTable key={t.title} title={t.title} stocks={stocks} onRowClick={handleRowClick} />
                     ))}
                 </SimpleGrid>
             </Container>
+ 
+            {/* Global popup — one for all tables */}
+            <StockModal stock={selectedStock} onClose={handleClose} onView={handleView} />
         </Box>
     );
 };
