@@ -17,7 +17,15 @@ const STOCK_META: Record<string, { code: string; market: string; sector: string;
 const FALLBACK_META = { code: '-', market: '-', sector: '-', mcap: '-', pe: '-', dy: '-' };
 
 // ── Financial records per stock (mock quarterly data) ──────────
-const FINANCIAL_DATA: Record<string, { period: string; revenue: string; netProfit: string; margin: string; eps: string; qoq: string; yoy: string }[]> = {
+const FINANCIAL_DATA: Record<string, { 
+        period: string; 
+        revenue: string; 
+        netProfit: string; 
+        margin: string; 
+        eps: string; 
+        qoq: string; 
+        yoy: string 
+    }[]> = {
     '5ER': [
         { period: '2025-03', revenue: '18.456M',  netProfit: '3.210M',  margin: '17.39%', eps: '0.08', qoq: '+12.30%', yoy: '+34.50%' }, //1
         { period: '2024-12', revenue: '16.423M',  netProfit: '2.860M',  margin: '17.42%', eps: '0.07', qoq: '+8.10%',  yoy: '+28.20%' },
@@ -1010,7 +1018,7 @@ function StockDetail() {
     return (
         <div style={{ minHeight: '100vh', background: '#e00000' }}>
 
-            {/* ── Header ─────────────────────────────────────────── */}
+            {/* ── Header ── */}
             <div style={{ background: '#900000', borderBottom: '3px solid #ffd700', padding: '0 20px' }}>
                 <div style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -1025,7 +1033,7 @@ function StockDetail() {
                         <span style={{ fontSize: 26, fontWeight: 900, color: '#ffd700', letterSpacing: 1 }}>{name}</span>
                         <span style={{ fontSize: 15, fontWeight: 700, color: '#ffcc33' }}>{meta.code}</span>
                         <span style={{
-                            fontSize: 12, fontWeight: 700, color: '#700000',
+                            fontSize: 18, fontWeight: 700, color: '#700000',
                             background: '#ffd700', borderRadius: 5, padding: '2px 10px',
                         }}>{meta.market}</span>
                     </div>

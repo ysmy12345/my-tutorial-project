@@ -80,7 +80,7 @@ const WuChangHeader = () => {
                             </Center>
                             <Stack gap={0} visibleFrom="xs">
                                 <Text fw={900} size="lg" style={{ letterSpacing: '0.5px', lineHeight: 1.2, color: '#ffd700' }}>WuChang 無常</Text>
-                                <Text size="10px" fw={600} style={{ color: '#ffcc33' }}>THE NO.1 AI FINANCIAL PLATFORM</Text>
+                                <Text size="12px" fw={600} style={{ color: '#ffcc33' }}>THE NO.1 AI FINANCIAL PLATFORM</Text>
                             </Stack>
                         </Group>
 
@@ -95,8 +95,8 @@ const WuChangHeader = () => {
                                     <Group gap="xs" wrap="nowrap">
                                         <link.Icon size={16} color={link.active ? '#ffd700' : '#ffcc33'} />
                                         <Stack gap={0}>
-                                            <Text size="12px" fw={600}>{link.label}</Text>
-                                            <Text size="9px" style={{ color: '#ffcc33', marginTop: rem(-2) }}>{link.subLabel}</Text>
+                                            <Text size="18px" fw={600}>{link.label}</Text>
+                                            <Text size="12px" style={{ color: '#ffcc33', marginTop: rem(-2) }}>{link.subLabel}</Text>
                                         </Stack>
                                         {link.active && <ChevronDown size={11} color="#ffd700" />}
                                     </Group>
@@ -184,6 +184,7 @@ const StockModal = ({ stock, onClose, onView }: {
                     onClick={onView}>
                     View
                 </Button>
+                
                 <Button radius="xl" px="xl" fw={700} variant="outline"
                     style={{ borderColor: '#ffd700', color: '#ffd700', minWidth: 100 }}
                     onClick={onClose}>
