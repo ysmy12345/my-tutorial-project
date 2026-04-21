@@ -2,10 +2,7 @@
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Suspense, useState } from 'react';
 
-const GOLD = '#ffd700';
-const GOLD2 = '#ffe566';
-
-const STOCK_META: Record<string, { code: string; market: string; sector: string; mcap: string; pe: string; dy: string; }> = {
+const STOCK_META: Record<string, { code: string; market: string; sector: string; mcap: string; pe: string; dy: string }> = {
     '5ER':    { code: '0397', market: 'Main Market', sector: 'Others › Others',                                 mcap: 'RM 400.40M', pe: '30.18', dy: '-'     },
     'AAX':    { code: '5238', market: 'Main Market', sector: 'Industrials › Passenger Transportation Services', mcap: 'RM 4.27B',   pe: '22.26', dy: '-'     },
     'SUNMED': { code: '5555', market: 'Main Market', sector: 'Healthcare › Healthcare Providers & Services',    mcap: 'RM 21.28B',  pe: '47.33', dy: '-'     },
@@ -16,212 +13,212 @@ const STOCK_META: Record<string, { code: string; market: string; sector: string;
     'PBBANK': { code: '1295', market: 'Main Market', sector: 'Finance › Banking Services',                     mcap: 'RM 90.45B',  pe: '12.52', dy: '4.83%' },
     'TENAGA': { code: '5347', market: 'Main Market', sector: 'Utilities › Electrical Utilities & IPPs',        mcap: 'RM 83.12B',  pe: '17.43', dy: '3.72%' },
 };
-const FALLBACK_META = { code: '-', market: '-', sector: '-', mcap: '-', pe: '-', dy: '-' };
+const FM = { code: '-', market: '-', sector: '-', mcap: '-', pe: '-', dy: '-' };
 
 const FINANCIAL_DATA: Record<string, { period: string; revenue: string; netProfit: string; margin: string; eps: string; qoq: string; yoy: string }[]> = {
     '5ER': [
-        { period: '2007-12', revenue: '21.904M', netProfit: '3.306M', margin: '15.09%', eps: '0.00', qoq: '+13.67%', yoy: '+28.15%' }, //1
+        { period: '2007-12', revenue: '21.904M', netProfit: '3.306M', margin: '15.09%', eps: '0.00', qoq: '+13.67%', yoy: '+28.15%' },
         { period: '2008-09', revenue: '21.801M', netProfit: '2.969M', margin: '13.62%', eps: '0.00', qoq: '-14.92%', yoy: '+21.62%' },
-        { period: '2003-12', revenue: '20.829M', netProfit: '4.068M', margin: '19.53%', eps: '0.00', qoq: '+9.54%',  yoy: '-10.45%' },
-        { period: '2002-12', revenue: '15.556M', netProfit: '3.796M', margin: '24.40%', eps: '0.00', qoq: '-3.86%',  yoy: '+7.24%'  },
+        { period: '2003-12', revenue: '20.829M', netProfit: '4.068M', margin: '19.53%', eps: '0.00', qoq: '+9.54%', yoy: '-10.45%' },
+        { period: '2002-12', revenue: '15.556M', netProfit: '3.796M', margin: '24.40%', eps: '0.00', qoq: '-3.86%', yoy: '+7.24%' },
         { period: '2011-09', revenue: '19.648M', netProfit: '3.765M', margin: '19.16%', eps: '0.00', qoq: '+22.72%', yoy: '+11.99%' },
-        { period: '2001-09', revenue: '20.952M', netProfit: '4.044M', margin: '19.30%', eps: '0.00', qoq: '-6.90%',  yoy: '+36.47%' },
+        { period: '2001-09', revenue: '20.952M', netProfit: '4.044M', margin: '19.30%', eps: '0.00', qoq: '-6.90%', yoy: '+36.47%' },
         { period: '2005-09', revenue: '20.159M', netProfit: '3.401M', margin: '16.87%', eps: '0.00', qoq: '+10.44%', yoy: '+48.67%' },
-        { period: '2019-03', revenue: '21.033M', netProfit: '3.636M', margin: '17.29%', eps: '0.00', qoq: '+17.08%', yoy: '+9.04%'  },
-        { period: '2006-12', revenue: '16.765M', netProfit: '2.712M', margin: '16.18%', eps: '0.00', qoq: '+9.22%',  yoy: '+21.76%' },
-        { period: '2014-12', revenue: '21.632M', netProfit: '3.735M', margin: '17.27%', eps: '0.00', qoq: '-12.84%', yoy: '+18.94%' }, //10
-        { period: '2018-09', revenue: '20.271M', netProfit: '3.028M', margin: '14.94%', eps: '0.00', qoq: '-7.45%',  yoy: '+58.13%' },
+        { period: '2019-03', revenue: '21.033M', netProfit: '3.636M', margin: '17.29%', eps: '0.00', qoq: '+17.08%', yoy: '+9.04%' },
+        { period: '2006-12', revenue: '16.765M', netProfit: '2.712M', margin: '16.18%', eps: '0.00', qoq: '+9.22%', yoy: '+21.76%' },
+        { period: '2014-12', revenue: '21.632M', netProfit: '3.735M', margin: '17.27%', eps: '0.00', qoq: '-12.84%', yoy: '+18.94%' },
+        { period: '2018-09', revenue: '20.271M', netProfit: '3.028M', margin: '14.94%', eps: '0.00', qoq: '-7.45%', yoy: '+58.13%' },
         { period: '2022-12', revenue: '17.064M', netProfit: '2.918M', margin: '17.10%', eps: '0.00', qoq: '+17.16%', yoy: '+50.36%' },
         { period: '2005-12', revenue: '16.170M', netProfit: '3.830M', margin: '23.69%', eps: '0.00', qoq: '+11.79%', yoy: '+42.70%' },
-        { period: '2021-09', revenue: '17.482M', netProfit: '3.500M', margin: '20.02%', eps: '0.00', qoq: '-4.19%',  yoy: '+19.98%' },
-        { period: '2007-09', revenue: '22.170M', netProfit: '3.702M', margin: '16.70%', eps: '0.00', qoq: '+15.29%', yoy: '+7.79%'  },
+        { period: '2021-09', revenue: '17.482M', netProfit: '3.500M', margin: '20.02%', eps: '0.00', qoq: '-4.19%', yoy: '+19.98%' },
+        { period: '2007-09', revenue: '22.170M', netProfit: '3.702M', margin: '16.70%', eps: '0.00', qoq: '+15.29%', yoy: '+7.79%' },
         { period: '2008-06', revenue: '21.272M', netProfit: '3.179M', margin: '14.95%', eps: '0.00', qoq: '-14.40%', yoy: '+31.91%' },
-        { period: '2006-09', revenue: '21.130M', netProfit: '3.178M', margin: '15.04%', eps: '0.00', qoq: '-8.96%',  yoy: '+45.27%' },
+        { period: '2006-09', revenue: '21.130M', netProfit: '3.178M', margin: '15.04%', eps: '0.00', qoq: '-8.96%', yoy: '+45.27%' },
         { period: '2013-09', revenue: '16.318M', netProfit: '3.793M', margin: '23.25%', eps: '0.00', qoq: '+10.83%', yoy: '+49.96%' },
         { period: '2020-09', revenue: '21.171M', netProfit: '4.013M', margin: '18.96%', eps: '0.00', qoq: '+15.33%', yoy: '+35.06%' },
-        { period: '2002-03', revenue: '20.225M', netProfit: '2.946M', margin: '14.57%', eps: '0.00', qoq: '+7.73%',  yoy: '+37.84%' }, //20
-        { period: '2010-12', revenue: '16.717M', netProfit: '4.004M', margin: '23.95%', eps: '0.00', qoq: '-7.27%',  yoy: '-8.97%'  },
-        { period: '2023-12', revenue: '21.907M', netProfit: '2.564M', margin: '11.70%', eps: '0.00', qoq: '-13.32%', yoy: '-1.74%'  },
-        { period: '2010-03', revenue: '19.710M', netProfit: '3.432M', margin: '17.41%', eps: '0.00', qoq: '+16.26%', yoy: '-9.48%'  },
-        { period: '2017-09', revenue: '16.611M', netProfit: '2.989M', margin: '17.99%', eps: '0.00', qoq: '-0.36%',  yoy: '+42.14%' },
-        { period: '2010-06', revenue: '17.871M', netProfit: '4.133M', margin: '23.13%', eps: '0.00', qoq: '+10.67%', yoy: '-7.32%'  },
-        { period: '2016-09', revenue: '17.004M', netProfit: '3.659M', margin: '21.52%', eps: '0.00', qoq: '-1.11%',  yoy: '+9.79%'  },
-        { period: '2008-03', revenue: '20.464M', netProfit: '2.632M', margin: '12.86%', eps: '0.00', qoq: '+14.81%', yoy: '-7.56%'  },
+        { period: '2002-03', revenue: '20.225M', netProfit: '2.946M', margin: '14.57%', eps: '0.00', qoq: '+7.73%', yoy: '+37.84%' },
+        { period: '2010-12', revenue: '16.717M', netProfit: '4.004M', margin: '23.95%', eps: '0.00', qoq: '-7.27%', yoy: '-8.97%' },
+        { period: '2023-12', revenue: '21.907M', netProfit: '2.564M', margin: '11.70%', eps: '0.00', qoq: '-13.32%', yoy: '-1.74%' },
+        { period: '2010-03', revenue: '19.710M', netProfit: '3.432M', margin: '17.41%', eps: '0.00', qoq: '+16.26%', yoy: '-9.48%' },
+        { period: '2017-09', revenue: '16.611M', netProfit: '2.989M', margin: '17.99%', eps: '0.00', qoq: '-0.36%', yoy: '+42.14%' },
+        { period: '2010-06', revenue: '17.871M', netProfit: '4.133M', margin: '23.13%', eps: '0.00', qoq: '+10.67%', yoy: '-7.32%' },
+        { period: '2016-09', revenue: '17.004M', netProfit: '3.659M', margin: '21.52%', eps: '0.00', qoq: '-1.11%', yoy: '+9.79%' },
+        { period: '2008-03', revenue: '20.464M', netProfit: '2.632M', margin: '12.86%', eps: '0.00', qoq: '+14.81%', yoy: '-7.56%' },
         { period: '2010-09', revenue: '20.591M', netProfit: '3.516M', margin: '17.08%', eps: '0.00', qoq: '+22.60%', yoy: '+11.63%' },
-        { period: '2012-03', revenue: '20.167M', netProfit: '3.847M', margin: '19.07%', eps: '0.00', qoq: '+6.85%',  yoy: '-0.08%'  },
-        { period: '2024-03', revenue: '15.953M', netProfit: '2.941M', margin: '18.44%', eps: '0.00', qoq: '+7.02%',  yoy: '-10.44%' }, //30
-        { period: '2019-09', revenue: '21.288M', netProfit: '3.111M', margin: '14.61%', eps: '0.00', qoq: '-2.92%',  yoy: '+53.30%' },
-        { period: '2020-03', revenue: '19.214M', netProfit: '3.621M', margin: '18.85%', eps: '0.00', qoq: '+13.24%', yoy: '+9.90%'  },
-        { period: '2016-12', revenue: '22.122M', netProfit: '2.946M', margin: '13.32%', eps: '0.00', qoq: '+1.49%',  yoy: '-3.60%'  },
-        { period: '2015-06', revenue: '17.883M', netProfit: '2.967M', margin: '16.59%', eps: '0.00', qoq: '+0.19%',  yoy: '-16.41%' },
+        { period: '2012-03', revenue: '20.167M', netProfit: '3.847M', margin: '19.07%', eps: '0.00', qoq: '+6.85%', yoy: '-0.08%' },
+        { period: '2024-03', revenue: '15.953M', netProfit: '2.941M', margin: '18.44%', eps: '0.00', qoq: '+7.02%', yoy: '-10.44%' },
+        { period: '2019-09', revenue: '21.288M', netProfit: '3.111M', margin: '14.61%', eps: '0.00', qoq: '-2.92%', yoy: '+53.30%' },
+        { period: '2020-03', revenue: '19.214M', netProfit: '3.621M', margin: '18.85%', eps: '0.00', qoq: '+13.24%', yoy: '+9.90%' },
+        { period: '2016-12', revenue: '22.122M', netProfit: '2.946M', margin: '13.32%', eps: '0.00', qoq: '+1.49%', yoy: '-3.60%' },
+        { period: '2015-06', revenue: '17.883M', netProfit: '2.967M', margin: '16.59%', eps: '0.00', qoq: '+0.19%', yoy: '-16.41%' },
         { period: '2012-12', revenue: '22.347M', netProfit: '2.597M', margin: '11.62%', eps: '0.00', qoq: '+13.17%', yoy: '+22.31%' },
-        { period: '2017-06', revenue: '22.073M', netProfit: '3.500M', margin: '15.86%', eps: '0.00', qoq: '-0.17%',  yoy: '+28.48%' },
-        { period: '2017-12', revenue: '18.486M', netProfit: '3.470M', margin: '18.77%', eps: '0.00', qoq: '-7.14%',  yoy: '+31.65%' },
-        { period: '2023-03', revenue: '16.619M', netProfit: '3.764M', margin: '22.65%', eps: '0.00', qoq: '+12.45%', yoy: '+3.09%'  },
+        { period: '2017-06', revenue: '22.073M', netProfit: '3.500M', margin: '15.86%', eps: '0.00', qoq: '-0.17%', yoy: '+28.48%' },
+        { period: '2017-12', revenue: '18.486M', netProfit: '3.470M', margin: '18.77%', eps: '0.00', qoq: '-7.14%', yoy: '+31.65%' },
+        { period: '2023-03', revenue: '16.619M', netProfit: '3.764M', margin: '22.65%', eps: '0.00', qoq: '+12.45%', yoy: '+3.09%' },
         { period: '2006-03', revenue: '17.371M', netProfit: '2.941M', margin: '16.93%', eps: '0.00', qoq: '-12.94%', yoy: '-18.61%' },
-        { period: '2003-09', revenue: '19.306M', netProfit: '4.124M', margin: '21.36%', eps: '0.00', qoq: '+22.25%', yoy: '+19.58%' }, //40
+        { period: '2003-09', revenue: '19.306M', netProfit: '4.124M', margin: '21.36%', eps: '0.00', qoq: '+22.25%', yoy: '+19.58%' },
         { period: '2004-03', revenue: '15.529M', netProfit: '2.724M', margin: '17.54%', eps: '0.00', qoq: '+10.03%', yoy: '-10.53%' },
-        { period: '2009-03', revenue: '19.879M', netProfit: '3.543M', margin: '17.82%', eps: '0.00', qoq: '+8.54%',  yoy: '-12.24%' },
+        { period: '2009-03', revenue: '19.879M', netProfit: '3.543M', margin: '17.82%', eps: '0.00', qoq: '+8.54%', yoy: '-12.24%' },
         { period: '2016-06', revenue: '17.780M', netProfit: '3.238M', margin: '18.21%', eps: '0.00', qoq: '+15.77%', yoy: '-16.21%' },
         { period: '2021-12', revenue: '22.132M', netProfit: '4.025M', margin: '18.19%', eps: '0.00', qoq: '+16.59%', yoy: '-12.11%' },
-        { period: '2004-12', revenue: '19.201M', netProfit: '3.258M', margin: '16.97%', eps: '0.00', qoq: '-1.20%',  yoy: '+50.54%' },
-        { period: '2019-06', revenue: '22.458M', netProfit: '3.378M', margin: '15.04%', eps: '0.00', qoq: '-3.09%',  yoy: '+52.69%' },
+        { period: '2004-12', revenue: '19.201M', netProfit: '3.258M', margin: '16.97%', eps: '0.00', qoq: '-1.20%', yoy: '+50.54%' },
+        { period: '2019-06', revenue: '22.458M', netProfit: '3.378M', margin: '15.04%', eps: '0.00', qoq: '-3.09%', yoy: '+52.69%' },
         { period: '2025-12', revenue: '19.539M', netProfit: '2.994M', margin: '15.32%', eps: '0.00', qoq: '+13.29%', yoy: '-18.85%' },
         { period: '2003-06', revenue: '18.459M', netProfit: '2.576M', margin: '13.95%', eps: '0.00', qoq: '+12.70%', yoy: '+46.42%' },
-        { period: '2014-09', revenue: '16.242M', netProfit: '3.613M', margin: '22.25%', eps: '0.00', qoq: '-7.15%',  yoy: '+31.46%' },
-        { period: '2002-06', revenue: '15.640M', netProfit: '2.766M', margin: '17.68%', eps: '0.00', qoq: '-2.61%',  yoy: '+2.72%'  }, //50
+        { period: '2014-09', revenue: '16.242M', netProfit: '3.613M', margin: '22.25%', eps: '0.00', qoq: '-7.15%', yoy: '+31.46%' },
+        { period: '2002-06', revenue: '15.640M', netProfit: '2.766M', margin: '17.68%', eps: '0.00', qoq: '-2.61%', yoy: '+2.72%' },
         { period: '2020-06', revenue: '18.050M', netProfit: '3.155M', margin: '17.48%', eps: '0.00', qoq: '+11.94%', yoy: '-11.10%' },
-        { period: '2022-03', revenue: '22.454M', netProfit: '2.929M', margin: '13.04%', eps: '0.00', qoq: '+1.08%',  yoy: '-2.77%'  },
-        { period: '2009-12', revenue: '20.761M', netProfit: '3.536M', margin: '17.03%', eps: '0.00', qoq: '-9.30%',  yoy: '+38.82%' },
+        { period: '2022-03', revenue: '22.454M', netProfit: '2.929M', margin: '13.04%', eps: '0.00', qoq: '+1.08%', yoy: '-2.77%' },
+        { period: '2009-12', revenue: '20.761M', netProfit: '3.536M', margin: '17.03%', eps: '0.00', qoq: '-9.30%', yoy: '+38.82%' },
         { period: '2021-03', revenue: '19.907M', netProfit: '4.087M', margin: '20.53%', eps: '0.00', qoq: '+17.01%', yoy: '-15.81%' },
         { period: '2025-06', revenue: '18.666M', netProfit: '4.045M', margin: '21.67%', eps: '0.00', qoq: '-11.06%', yoy: '+36.19%' },
         { period: '2022-09', revenue: '21.793M', netProfit: '2.769M', margin: '12.71%', eps: '0.00', qoq: '-14.22%', yoy: '+21.26%' },
-        { period: '2025-09', revenue: '20.273M', netProfit: '3.535M', margin: '17.44%', eps: '0.00', qoq: '-4.06%',  yoy: '-4.69%'  },
-        { period: '2001-12', revenue: '20.999M', netProfit: '2.898M', margin: '13.80%', eps: '0.00', qoq: '-0.30%',  yoy: '+50.97%' },
-        { period: '2022-06', revenue: '19.664M', netProfit: '3.567M', margin: '18.14%', eps: '0.00', qoq: '+7.21%',  yoy: '+43.18%' },
-        { period: '2019-12', revenue: '19.656M', netProfit: '4.011M', margin: '20.41%', eps: '0.00', qoq: '+10.95%', yoy: '-13.13%' }, //60
-        { period: '2012-06', revenue: '20.348M', netProfit: '3.658M', margin: '17.98%', eps: '0.00', qoq: '+10.21%', yoy: '-6.21%'  },
+        { period: '2025-09', revenue: '20.273M', netProfit: '3.535M', margin: '17.44%', eps: '0.00', qoq: '-4.06%', yoy: '-4.69%' },
+        { period: '2001-12', revenue: '20.999M', netProfit: '2.898M', margin: '13.80%', eps: '0.00', qoq: '-0.30%', yoy: '+50.97%' },
+        { period: '2022-06', revenue: '19.664M', netProfit: '3.567M', margin: '18.14%', eps: '0.00', qoq: '+7.21%', yoy: '+43.18%' },
+        { period: '2019-12', revenue: '19.656M', netProfit: '4.011M', margin: '20.41%', eps: '0.00', qoq: '+10.95%', yoy: '-13.13%' },
+        { period: '2012-06', revenue: '20.348M', netProfit: '3.658M', margin: '17.98%', eps: '0.00', qoq: '+10.21%', yoy: '-6.21%' },
         { period: '2011-12', revenue: '15.477M', netProfit: '3.958M', margin: '25.57%', eps: '0.00', qoq: '+14.72%', yoy: '+10.14%' },
-        { period: '2008-12', revenue: '21.460M', netProfit: '2.943M', margin: '13.71%', eps: '0.00', qoq: '+11.46%', yoy: '-1.08%'  },
-        { period: '2005-06', revenue: '22.037M', netProfit: '3.094M', margin: '14.04%', eps: '0.00', qoq: '+7.09%',  yoy: '+56.94%' },
-        { period: '2011-06', revenue: '19.930M', netProfit: '3.094M', margin: '15.53%', eps: '0.00', qoq: '+9.63%',  yoy: '+30.03%' },
-        { period: '2011-03', revenue: '16.091M', netProfit: '3.181M', margin: '19.77%', eps: '0.00', qoq: '+14.12%', yoy: '+4.33%'  },
-        { period: '2007-06', revenue: '17.338M', netProfit: '3.301M', margin: '19.04%', eps: '0.00', qoq: '-2.57%',  yoy: '+13.24%' },
+        { period: '2008-12', revenue: '21.460M', netProfit: '2.943M', margin: '13.71%', eps: '0.00', qoq: '+11.46%', yoy: '-1.08%' },
+        { period: '2005-06', revenue: '22.037M', netProfit: '3.094M', margin: '14.04%', eps: '0.00', qoq: '+7.09%', yoy: '+56.94%' },
+        { period: '2011-06', revenue: '19.930M', netProfit: '3.094M', margin: '15.53%', eps: '0.00', qoq: '+9.63%', yoy: '+30.03%' },
+        { period: '2011-03', revenue: '16.091M', netProfit: '3.181M', margin: '19.77%', eps: '0.00', qoq: '+14.12%', yoy: '+4.33%' },
+        { period: '2007-06', revenue: '17.338M', netProfit: '3.301M', margin: '19.04%', eps: '0.00', qoq: '-2.57%', yoy: '+13.24%' },
         { period: '2025-03', revenue: '18.264M', netProfit: '3.583M', margin: '19.62%', eps: '0.00', qoq: '+22.65%', yoy: '-11.58%' },
-        { period: '2023-09', revenue: '18.482M', netProfit: '3.605M', margin: '19.50%', eps: '0.00', qoq: '+10.89%', yoy: '-6.33%'  },
-        { period: '2018-06', revenue: '21.119M', netProfit: '2.983M', margin: '14.13%', eps: '0.00', qoq: '-10.17%', yoy: '-7.34%'  }, //70
+        { period: '2023-09', revenue: '18.482M', netProfit: '3.605M', margin: '19.50%', eps: '0.00', qoq: '+10.89%', yoy: '-6.33%' },
+        { period: '2018-06', revenue: '21.119M', netProfit: '2.983M', margin: '14.13%', eps: '0.00', qoq: '-10.17%', yoy: '-7.34%' },
         { period: '2024-12', revenue: '20.751M', netProfit: '3.644M', margin: '17.56%', eps: '0.00', qoq: '+19.77%', yoy: '+58.73%' },
-        { period: '2001-06', revenue: '19.861M', netProfit: '2.988M', margin: '15.05%', eps: '0.00', qoq: '-6.53%',  yoy: '+9.37%'  },
-        { period: '2014-06', revenue: '16.141M', netProfit: '3.213M', margin: '19.90%', eps: '0.00', qoq: '+6.15%',  yoy: '+46.25%' },
-        { period: '2004-06', revenue: '18.433M', netProfit: '2.863M', margin: '15.53%', eps: '0.00', qoq: '+15.16%', yoy: '-1.36%'  },
-        { period: '2006-06', revenue: '21.358M', netProfit: '3.938M', margin: '18.44%', eps: '0.00', qoq: '-4.73%',  yoy: '+57.65%' },
-        { period: '2015-12', revenue: '15.886M', netProfit: '3.996M', margin: '25.16%', eps: '0.00', qoq: '-7.14%',  yoy: '-15.49%' },
+        { period: '2001-06', revenue: '19.861M', netProfit: '2.988M', margin: '15.05%', eps: '0.00', qoq: '-6.53%', yoy: '+9.37%' },
+        { period: '2014-06', revenue: '16.141M', netProfit: '3.213M', margin: '19.90%', eps: '0.00', qoq: '+6.15%', yoy: '+46.25%' },
+        { period: '2004-06', revenue: '18.433M', netProfit: '2.863M', margin: '15.53%', eps: '0.00', qoq: '+15.16%', yoy: '-1.36%' },
+        { period: '2006-06', revenue: '21.358M', netProfit: '3.938M', margin: '18.44%', eps: '0.00', qoq: '-4.73%', yoy: '+57.65%' },
+        { period: '2015-12', revenue: '15.886M', netProfit: '3.996M', margin: '25.16%', eps: '0.00', qoq: '-7.14%', yoy: '-15.49%' },
         { period: '2018-12', revenue: '15.931M', netProfit: '2.709M', margin: '17.01%', eps: '0.00', qoq: '+19.37%', yoy: '+17.77%' },
         { period: '2015-09', revenue: '18.940M', netProfit: '2.718M', margin: '14.35%', eps: '0.00', qoq: '-12.24%', yoy: '+29.44%' },
         { period: '2003-03', revenue: '19.277M', netProfit: '3.539M', margin: '18.36%', eps: '0.00', qoq: '+22.01%', yoy: '+56.86%' },
-        { period: '2007-03', revenue: '18.615M', netProfit: '3.728M', margin: '20.03%', eps: '0.00', qoq: '-11.67%', yoy: '+17.40%' }, //80
+        { period: '2007-03', revenue: '18.615M', netProfit: '3.728M', margin: '20.03%', eps: '0.00', qoq: '-11.67%', yoy: '+17.40%' },
         { period: '2017-03', revenue: '22.434M', netProfit: '2.614M', margin: '11.65%', eps: '0.00', qoq: '+10.67%', yoy: '+32.81%' },
         { period: '2013-12', revenue: '17.868M', netProfit: '3.896M', margin: '21.81%', eps: '0.00', qoq: '+23.44%', yoy: '+50.05%' },
-        { period: '2021-06', revenue: '18.350M', netProfit: '3.548M', margin: '19.34%', eps: '0.00', qoq: '-12.55%', yoy: '-8.29%'  },
-        { period: '2013-03', revenue: '17.057M', netProfit: '3.044M', margin: '17.84%', eps: '0.00', qoq: '-9.32%',  yoy: '+54.93%' },
+        { period: '2021-06', revenue: '18.350M', netProfit: '3.548M', margin: '19.34%', eps: '0.00', qoq: '-12.55%', yoy: '-8.29%' },
+        { period: '2013-03', revenue: '17.057M', netProfit: '3.044M', margin: '17.84%', eps: '0.00', qoq: '-9.32%', yoy: '+54.93%' },
         { period: '2015-03', revenue: '15.313M', netProfit: '3.578M', margin: '23.37%', eps: '0.00', qoq: '+13.26%', yoy: '-11.28%' },
-        { period: '2023-06', revenue: '20.340M', netProfit: '3.276M', margin: '16.11%', eps: '0.00', qoq: '+14.67%', yoy: '-8.03%'  },
-        { period: '2005-03', revenue: '20.444M', netProfit: '4.030M', margin: '19.71%', eps: '0.00', qoq: '-10.48%', yoy: '+0.40%'  },
+        { period: '2023-06', revenue: '20.340M', netProfit: '3.276M', margin: '16.11%', eps: '0.00', qoq: '+14.67%', yoy: '-8.03%' },
+        { period: '2005-03', revenue: '20.444M', netProfit: '4.030M', margin: '19.71%', eps: '0.00', qoq: '-10.48%', yoy: '+0.40%' },
         { period: '2012-09', revenue: '21.426M', netProfit: '3.994M', margin: '18.64%', eps: '0.00', qoq: '+13.86%', yoy: '+56.57%' },
-        { period: '2009-06', revenue: '20.739M', netProfit: '2.903M', margin: '14.00%', eps: '0.00', qoq: '-0.76%',  yoy: '+24.91%' },
-        { period: '2013-06', revenue: '19.040M', netProfit: '3.067M', margin: '16.11%', eps: '0.00', qoq: '+21.47%', yoy: '+38.12%' }, //90
-        { period: '2002-09', revenue: '19.742M', netProfit: '3.821M', margin: '19.36%', eps: '0.00', qoq: '+10.96%', yoy: '+8.92%'  },
-        { period: '2014-03', revenue: '20.685M', netProfit: '2.688M', margin: '13.00%', eps: '0.00', qoq: '+8.76%',  yoy: '+22.71%' },
+        { period: '2009-06', revenue: '20.739M', netProfit: '2.903M', margin: '14.00%', eps: '0.00', qoq: '-0.76%', yoy: '+24.91%' },
+        { period: '2013-06', revenue: '19.040M', netProfit: '3.067M', margin: '16.11%', eps: '0.00', qoq: '+21.47%', yoy: '+38.12%' },
+        { period: '2002-09', revenue: '19.742M', netProfit: '3.821M', margin: '19.36%', eps: '0.00', qoq: '+10.96%', yoy: '+8.92%' },
+        { period: '2014-03', revenue: '20.685M', netProfit: '2.688M', margin: '13.00%', eps: '0.00', qoq: '+8.76%', yoy: '+22.71%' },
         { period: '2024-09', revenue: '22.044M', netProfit: '2.842M', margin: '12.89%', eps: '0.00', qoq: '+17.50%', yoy: '+45.66%' },
         { period: '2020-12', revenue: '17.227M', netProfit: '3.379M', margin: '19.61%', eps: '0.00', qoq: '+20.59%', yoy: '+42.11%' },
         { period: '2016-03', revenue: '19.156M', netProfit: '2.608M', margin: '13.61%', eps: '0.00', qoq: '+23.82%', yoy: '+36.68%' },
-        { period: '2001-03', revenue: '18.769M', netProfit: '3.500M', margin: '18.65%', eps: '0.00', qoq: '-0.41%',  yoy: '+30.39%' },
-        { period: '2004-09', revenue: '22.163M', netProfit: '3.715M', margin: '16.76%', eps: '0.00', qoq: '+2.79%',  yoy: '+45.23%' },
-        { period: '2024-06', revenue: '20.785M', netProfit: '3.482M', margin: '16.75%', eps: '0.00', qoq: '-9.21%',  yoy: '+3.25%'  },
+        { period: '2001-03', revenue: '18.769M', netProfit: '3.500M', margin: '18.65%', eps: '0.00', qoq: '-0.41%', yoy: '+30.39%' },
+        { period: '2004-09', revenue: '22.163M', netProfit: '3.715M', margin: '16.76%', eps: '0.00', qoq: '+2.79%', yoy: '+45.23%' },
+        { period: '2024-06', revenue: '20.785M', netProfit: '3.482M', margin: '16.75%', eps: '0.00', qoq: '-9.21%', yoy: '+3.25%' },
         { period: '2009-09', revenue: '16.729M', netProfit: '2.778M', margin: '16.60%', eps: '0.00', qoq: '+10.78%', yoy: '+25.57%' },
-        { period: '2018-03', revenue: '21.802M', netProfit: '3.072M', margin: '14.09%', eps: '0.00', qoq: '+14.73%', yoy: '+47.50%' }, //100
+        { period: '2018-03', revenue: '21.802M', netProfit: '3.072M', margin: '14.09%', eps: '0.00', qoq: '+14.73%', yoy: '+47.50%' },
     ],
     'AAX': [
-        { period: '2006-06', revenue: '1007.648M', netProfit: '41.979M', margin: '4.17%', eps: '0.05', qoq: '+6.07%',  yoy: '+17.78%' },
-        { period: '2010-06', revenue: '731.495M',  netProfit: '38.241M', margin: '5.23%', eps: '0.04', qoq: '+17.14%', yoy: '+17.34%' },
-        { period: '2020-12', revenue: '806.175M',  netProfit: '54.304M', margin: '6.74%', eps: '0.05', qoq: '+1.30%',  yoy: '-5.97%' },
-        { period: '2018-03', revenue: '839.808M',  netProfit: '54.718M', margin: '6.52%', eps: '0.06', qoq: '-0.36%',  yoy: '-4.25%' },
-        { period: '2009-03', revenue: '978.820M',  netProfit: '39.024M', margin: '3.99%', eps: '0.03', qoq: '-3.65%',  yoy: '+12.33%' },
+        { period: '2006-06', revenue: '1007.648M', netProfit: '41.979M', margin: '4.17%', eps: '0.05', qoq: '+6.07%', yoy: '+17.78%' },
+        { period: '2010-06', revenue: '731.495M', netProfit: '38.241M', margin: '5.23%', eps: '0.04', qoq: '+17.14%', yoy: '+17.34%' },
+        { period: '2020-12', revenue: '806.175M', netProfit: '54.304M', margin: '6.74%', eps: '0.05', qoq: '+1.30%', yoy: '-5.97%' },
+        { period: '2018-03', revenue: '839.808M', netProfit: '54.718M', margin: '6.52%', eps: '0.06', qoq: '-0.36%', yoy: '-4.25%' },
+        { period: '2009-03', revenue: '978.820M', netProfit: '39.024M', margin: '3.99%', eps: '0.03', qoq: '-3.65%', yoy: '+12.33%' },
         { period: '2008-03', revenue: '1059.049M', netProfit: '41.298M', margin: '3.90%', eps: '0.04', qoq: '+10.72%', yoy: '+6.13%' },
-        { period: '2008-12', revenue: '953.427M',  netProfit: '37.566M', margin: '3.94%', eps: '0.04', qoq: '+24.32%', yoy: '-12.74%' },
-        { period: '2012-09', revenue: '736.097M',  netProfit: '40.687M', margin: '5.53%', eps: '0.04', qoq: '-6.45%',  yoy: '-4.22%' },
-        { period: '2017-09', revenue: '753.274M',  netProfit: '52.292M', margin: '6.94%', eps: '0.05', qoq: '-12.45%', yoy: '+44.80%' },
+        { period: '2008-12', revenue: '953.427M', netProfit: '37.566M', margin: '3.94%', eps: '0.04', qoq: '+24.32%', yoy: '-12.74%' },
+        { period: '2012-09', revenue: '736.097M', netProfit: '40.687M', margin: '5.53%', eps: '0.04', qoq: '-6.45%', yoy: '-4.22%' },
+        { period: '2017-09', revenue: '753.274M', netProfit: '52.292M', margin: '6.94%', eps: '0.05', qoq: '-12.45%', yoy: '+44.80%' },
         { period: '2004-03', revenue: '1037.202M', netProfit: '38.467M', margin: '3.71%', eps: '0.03', qoq: '-14.17%', yoy: '-8.12%' },
-        { period: '2007-06', revenue: '905.446M',  netProfit: '36.488M', margin: '4.03%', eps: '0.04', qoq: '+12.13%', yoy: '+20.50%' },
-        { period: '2012-12', revenue: '744.047M',  netProfit: '50.064M', margin: '6.73%', eps: '0.05', qoq: '-14.20%', yoy: '+16.85%' },
-        { period: '2002-12', revenue: '1042.562M', netProfit: '49.829M', margin: '4.78%', eps: '0.05', qoq: '+3.79%',  yoy: '+46.60%' },
-        { period: '2021-06', revenue: '782.316M',  netProfit: '45.482M', margin: '5.81%', eps: '0.04', qoq: '+20.01%', yoy: '+13.75%' },
-        { period: '2014-03', revenue: '848.360M',  netProfit: '43.038M', margin: '5.07%', eps: '0.04', qoq: '-9.99%',  yoy: '+56.25%' },
-        { period: '2008-09', revenue: '762.261M',  netProfit: '45.363M', margin: '5.95%', eps: '0.05', qoq: '+15.11%', yoy: '-1.48%' },
-        { period: '2004-06', revenue: '940.486M',  netProfit: '53.589M', margin: '5.70%', eps: '0.06', qoq: '+14.19%', yoy: '+56.67%' },
-        { period: '2004-12', revenue: '1019.839M', netProfit: '34.456M', margin: '3.38%', eps: '0.03', qoq: '-6.91%',  yoy: '-3.55%' },
-        { period: '2020-06', revenue: '906.977M',  netProfit: '50.139M', margin: '5.53%', eps: '0.05', qoq: '+2.63%',  yoy: '+48.74%' },
-        { period: '2016-12', revenue: '895.395M',  netProfit: '47.883M', margin: '5.35%', eps: '0.05', qoq: '-5.30%',  yoy: '+50.61%' },
-        { period: '2017-03', revenue: '960.552M',  netProfit: '34.443M', margin: '3.59%', eps: '0.03', qoq: '-0.28%',  yoy: '-8.04%' },
-        { period: '2016-03', revenue: '1013.629M', netProfit: '44.532M', margin: '4.39%', eps: '0.05', qoq: '+4.93%',  yoy: '-11.08%' },
-        { period: '2024-09', revenue: '848.212M',  netProfit: '49.001M', margin: '5.78%', eps: '0.06', qoq: '-7.75%',  yoy: '+48.52%' },
-        { period: '2023-03', revenue: '976.286M',  netProfit: '43.408M', margin: '4.45%', eps: '0.05', qoq: '+10.31%', yoy: '+33.14%' },
-        { period: '2004-09', revenue: '946.037M',  netProfit: '41.196M', margin: '4.35%', eps: '0.04', qoq: '+15.33%', yoy: '+4.75%' },
-        { period: '2003-09', revenue: '784.477M',  netProfit: '51.328M', margin: '6.54%', eps: '0.05', qoq: '-7.29%',  yoy: '-13.34%' },
-        { period: '2005-06', revenue: '838.045M',  netProfit: '47.752M', margin: '5.70%', eps: '0.05', qoq: '-10.36%', yoy: '+20.18%' },
-        { period: '2025-06', revenue: '1055.805M', netProfit: '37.376M', margin: '3.54%', eps: '0.04', qoq: '-7.58%',  yoy: '-12.26%' },
-        { period: '2012-03', revenue: '853.623M',  netProfit: '52.152M', margin: '6.11%', eps: '0.06', qoq: '+20.04%', yoy: '-5.46%' },
-        { period: '2021-03', revenue: '873.028M',  netProfit: '40.007M', margin: '4.58%', eps: '0.04', qoq: '-5.24%',  yoy: '+47.23%' },
-        { period: '2006-03', revenue: '904.237M',  netProfit: '39.442M', margin: '4.36%', eps: '0.03', qoq: '+11.96%', yoy: '+57.33%' },
-        { period: '2008-06', revenue: '772.450M',  netProfit: '52.631M', margin: '6.81%', eps: '0.05', qoq: '-13.36%', yoy: '+13.71%' },
-        { period: '2024-03', revenue: '848.661M',  netProfit: '34.427M', margin: '4.06%', eps: '0.04', qoq: '+18.01%', yoy: '-10.63%' },
+        { period: '2007-06', revenue: '905.446M', netProfit: '36.488M', margin: '4.03%', eps: '0.04', qoq: '+12.13%', yoy: '+20.50%' },
+        { period: '2012-12', revenue: '744.047M', netProfit: '50.064M', margin: '6.73%', eps: '0.05', qoq: '-14.20%', yoy: '+16.85%' },
+        { period: '2002-12', revenue: '1042.562M', netProfit: '49.829M', margin: '4.78%', eps: '0.05', qoq: '+3.79%', yoy: '+46.60%' },
+        { period: '2021-06', revenue: '782.316M', netProfit: '45.482M', margin: '5.81%', eps: '0.04', qoq: '+20.01%', yoy: '+13.75%' },
+        { period: '2014-03', revenue: '848.360M', netProfit: '43.038M', margin: '5.07%', eps: '0.04', qoq: '-9.99%', yoy: '+56.25%' },
+        { period: '2008-09', revenue: '762.261M', netProfit: '45.363M', margin: '5.95%', eps: '0.05', qoq: '+15.11%', yoy: '-1.48%' },
+        { period: '2004-06', revenue: '940.486M', netProfit: '53.589M', margin: '5.70%', eps: '0.06', qoq: '+14.19%', yoy: '+56.67%' },
+        { period: '2004-12', revenue: '1019.839M', netProfit: '34.456M', margin: '3.38%', eps: '0.03', qoq: '-6.91%', yoy: '-3.55%' },
+        { period: '2020-06', revenue: '906.977M', netProfit: '50.139M', margin: '5.53%', eps: '0.05', qoq: '+2.63%', yoy: '+48.74%' },
+        { period: '2016-12', revenue: '895.395M', netProfit: '47.883M', margin: '5.35%', eps: '0.05', qoq: '-5.30%', yoy: '+50.61%' },
+        { period: '2017-03', revenue: '960.552M', netProfit: '34.443M', margin: '3.59%', eps: '0.03', qoq: '-0.28%', yoy: '-8.04%' },
+        { period: '2016-03', revenue: '1013.629M', netProfit: '44.532M', margin: '4.39%', eps: '0.05', qoq: '+4.93%', yoy: '-11.08%' },
+        { period: '2024-09', revenue: '848.212M', netProfit: '49.001M', margin: '5.78%', eps: '0.06', qoq: '-7.75%', yoy: '+48.52%' },
+        { period: '2023-03', revenue: '976.286M', netProfit: '43.408M', margin: '4.45%', eps: '0.05', qoq: '+10.31%', yoy: '+33.14%' },
+        { period: '2004-09', revenue: '946.037M', netProfit: '41.196M', margin: '4.35%', eps: '0.04', qoq: '+15.33%', yoy: '+4.75%' },
+        { period: '2003-09', revenue: '784.477M', netProfit: '51.328M', margin: '6.54%', eps: '0.05', qoq: '-7.29%', yoy: '-13.34%' },
+        { period: '2005-06', revenue: '838.045M', netProfit: '47.752M', margin: '5.70%', eps: '0.05', qoq: '-10.36%', yoy: '+20.18%' },
+        { period: '2025-06', revenue: '1055.805M', netProfit: '37.376M', margin: '3.54%', eps: '0.04', qoq: '-7.58%', yoy: '-12.26%' },
+        { period: '2012-03', revenue: '853.623M', netProfit: '52.152M', margin: '6.11%', eps: '0.06', qoq: '+20.04%', yoy: '-5.46%' },
+        { period: '2021-03', revenue: '873.028M', netProfit: '40.007M', margin: '4.58%', eps: '0.04', qoq: '-5.24%', yoy: '+47.23%' },
+        { period: '2006-03', revenue: '904.237M', netProfit: '39.442M', margin: '4.36%', eps: '0.03', qoq: '+11.96%', yoy: '+57.33%' },
+        { period: '2008-06', revenue: '772.450M', netProfit: '52.631M', margin: '6.81%', eps: '0.05', qoq: '-13.36%', yoy: '+13.71%' },
+        { period: '2024-03', revenue: '848.661M', netProfit: '34.427M', margin: '4.06%', eps: '0.04', qoq: '+18.01%', yoy: '-10.63%' },
         { period: '2002-06', revenue: '1007.290M', netProfit: '47.098M', margin: '4.68%', eps: '0.05', qoq: '+20.83%', yoy: '+29.91%' },
-        { period: '2011-12', revenue: '988.032M',  netProfit: '54.780M', margin: '5.54%', eps: '0.06', qoq: '+10.88%', yoy: '+19.95%' },
-        { period: '2018-12', revenue: '953.160M',  netProfit: '51.211M', margin: '5.37%', eps: '0.05', qoq: '+9.86%',  yoy: '+43.96%' },
-        { period: '2005-03', revenue: '949.946M',  netProfit: '51.168M', margin: '5.39%', eps: '0.06', qoq: '+19.47%', yoy: '+44.23%' },
-        { period: '2005-09', revenue: '762.223M',  netProfit: '50.921M', margin: '6.68%', eps: '0.05', qoq: '+9.07%',  yoy: '-14.78%' },
-        { period: '2002-09', revenue: '882.862M',  netProfit: '40.466M', margin: '4.58%', eps: '0.04', qoq: '+18.11%', yoy: '-0.64%' },
-        { period: '2001-12', revenue: '919.579M',  netProfit: '53.546M', margin: '5.82%', eps: '0.06', qoq: '+22.76%', yoy: '+27.87%' },
-        { period: '2006-09', revenue: '1059.977M', netProfit: '37.732M', margin: '3.56%', eps: '0.04', qoq: '+2.71%',  yoy: '-3.18%' },
-        { period: '2003-03', revenue: '952.535M',  netProfit: '49.233M', margin: '5.17%', eps: '0.04', qoq: '+11.34%', yoy: '+23.62%' },
-        { period: '2006-12', revenue: '844.152M',  netProfit: '37.469M', margin: '4.44%', eps: '0.03', qoq: '+12.19%', yoy: '+57.69%' },
-        { period: '2019-03', revenue: '828.739M',  netProfit: '52.015M', margin: '6.28%', eps: '0.06', qoq: '+19.19%', yoy: '+19.39%' },
-        { period: '2009-12', revenue: '898.853M',  netProfit: '39.857M', margin: '4.43%', eps: '0.05', qoq: '+22.13%', yoy: '+31.58%' },
-        { period: '2025-12', revenue: '891.744M',  netProfit: '48.045M', margin: '5.39%', eps: '0.04', qoq: '-13.51%', yoy: '+59.38%' },
-        { period: '2023-06', revenue: '726.005M',  netProfit: '35.883M', margin: '4.94%', eps: '0.04', qoq: '+24.59%', yoy: '+5.88%' },
-        { period: '2018-06', revenue: '916.614M',  netProfit: '34.822M', margin: '3.80%', eps: '0.04', qoq: '+9.83%',  yoy: '+54.75%' },
+        { period: '2011-12', revenue: '988.032M', netProfit: '54.780M', margin: '5.54%', eps: '0.06', qoq: '+10.88%', yoy: '+19.95%' },
+        { period: '2018-12', revenue: '953.160M', netProfit: '51.211M', margin: '5.37%', eps: '0.05', qoq: '+9.86%', yoy: '+43.96%' },
+        { period: '2005-03', revenue: '949.946M', netProfit: '51.168M', margin: '5.39%', eps: '0.06', qoq: '+19.47%', yoy: '+44.23%' },
+        { period: '2005-09', revenue: '762.223M', netProfit: '50.921M', margin: '6.68%', eps: '0.05', qoq: '+9.07%', yoy: '-14.78%' },
+        { period: '2002-09', revenue: '882.862M', netProfit: '40.466M', margin: '4.58%', eps: '0.04', qoq: '+18.11%', yoy: '-0.64%' },
+        { period: '2001-12', revenue: '919.579M', netProfit: '53.546M', margin: '5.82%', eps: '0.06', qoq: '+22.76%', yoy: '+27.87%' },
+        { period: '2006-09', revenue: '1059.977M', netProfit: '37.732M', margin: '3.56%', eps: '0.04', qoq: '+2.71%', yoy: '-3.18%' },
+        { period: '2003-03', revenue: '952.535M', netProfit: '49.233M', margin: '5.17%', eps: '0.04', qoq: '+11.34%', yoy: '+23.62%' },
+        { period: '2006-12', revenue: '844.152M', netProfit: '37.469M', margin: '4.44%', eps: '0.03', qoq: '+12.19%', yoy: '+57.69%' },
+        { period: '2019-03', revenue: '828.739M', netProfit: '52.015M', margin: '6.28%', eps: '0.06', qoq: '+19.19%', yoy: '+19.39%' },
+        { period: '2009-12', revenue: '898.853M', netProfit: '39.857M', margin: '4.43%', eps: '0.05', qoq: '+22.13%', yoy: '+31.58%' },
+        { period: '2025-12', revenue: '891.744M', netProfit: '48.045M', margin: '5.39%', eps: '0.04', qoq: '-13.51%', yoy: '+59.38%' },
+        { period: '2023-06', revenue: '726.005M', netProfit: '35.883M', margin: '4.94%', eps: '0.04', qoq: '+24.59%', yoy: '+5.88%' },
+        { period: '2018-06', revenue: '916.614M', netProfit: '34.822M', margin: '3.80%', eps: '0.04', qoq: '+9.83%', yoy: '+54.75%' },
         { period: '2017-06', revenue: '1026.616M', netProfit: '35.391M', margin: '3.45%', eps: '0.04', qoq: '+15.39%', yoy: '+7.09%' },
-        { period: '2014-06', revenue: '897.869M',  netProfit: '40.305M', margin: '4.49%', eps: '0.04', qoq: '+11.75%', yoy: '+24.66%' },
-        { period: '2011-09', revenue: '906.270M',  netProfit: '35.781M', margin: '3.95%', eps: '0.04', qoq: '+17.06%', yoy: '+54.63%' },
-        { period: '2016-09', revenue: '958.297M',  netProfit: '37.212M', margin: '3.88%', eps: '0.03', qoq: '-12.52%', yoy: '+45.75%' },
+        { period: '2014-06', revenue: '897.869M', netProfit: '40.305M', margin: '4.49%', eps: '0.04', qoq: '+11.75%', yoy: '+24.66%' },
+        { period: '2011-09', revenue: '906.270M', netProfit: '35.781M', margin: '3.95%', eps: '0.04', qoq: '+17.06%', yoy: '+54.63%' },
+        { period: '2016-09', revenue: '958.297M', netProfit: '37.212M', margin: '3.88%', eps: '0.03', qoq: '-12.52%', yoy: '+45.75%' },
         { period: '2014-12', revenue: '1025.706M', netProfit: '44.342M', margin: '4.32%', eps: '0.04', qoq: '-11.54%', yoy: '+2.88%' },
-        { period: '2010-03', revenue: '875.526M',  netProfit: '45.257M', margin: '5.17%', eps: '0.05', qoq: '+22.05%', yoy: '+39.83%' },
-        { period: '2023-12', revenue: '810.554M',  netProfit: '51.574M', margin: '6.36%', eps: '0.04', qoq: '-14.82%', yoy: '+45.66%' },
-        { period: '2001-03', revenue: '984.742M',  netProfit: '43.296M', margin: '4.40%', eps: '0.05', qoq: '+10.20%', yoy: '+29.07%' },
-        { period: '2024-12', revenue: '820.615M',  netProfit: '55.780M', margin: '6.80%', eps: '0.06', qoq: '-7.71%',  yoy: '+45.21%' },
-        { period: '2019-09', revenue: '1003.895M', netProfit: '51.655M', margin: '5.15%', eps: '0.05', qoq: '+9.74%',  yoy: '-9.16%' },
-        { period: '2024-06', revenue: '838.178M',  netProfit: '35.754M', margin: '4.27%', eps: '0.04', qoq: '+2.39%',  yoy: '+28.50%' },
-        { period: '2007-12', revenue: '883.769M',  netProfit: '40.769M', margin: '4.61%', eps: '0.04', qoq: '+5.59%',  yoy: '+58.62%' },
-        { period: '2013-12', revenue: '753.068M',  netProfit: '37.539M', margin: '4.98%', eps: '0.04', qoq: '-6.04%',  yoy: '+29.70%' },
-        { period: '2015-09', revenue: '904.086M',  netProfit: '50.924M', margin: '5.63%', eps: '0.05', qoq: '+24.52%', yoy: '+51.65%' },
+        { period: '2010-03', revenue: '875.526M', netProfit: '45.257M', margin: '5.17%', eps: '0.05', qoq: '+22.05%', yoy: '+39.83%' },
+        { period: '2023-12', revenue: '810.554M', netProfit: '51.574M', margin: '6.36%', eps: '0.04', qoq: '-14.82%', yoy: '+45.66%' },
+        { period: '2001-03', revenue: '984.742M', netProfit: '43.296M', margin: '4.40%', eps: '0.05', qoq: '+10.20%', yoy: '+29.07%' },
+        { period: '2024-12', revenue: '820.615M', netProfit: '55.780M', margin: '6.80%', eps: '0.06', qoq: '-7.71%', yoy: '+45.21%' },
+        { period: '2019-09', revenue: '1003.895M', netProfit: '51.655M', margin: '5.15%', eps: '0.05', qoq: '+9.74%', yoy: '-9.16%' },
+        { period: '2024-06', revenue: '838.178M', netProfit: '35.754M', margin: '4.27%', eps: '0.04', qoq: '+2.39%', yoy: '+28.50%' },
+        { period: '2007-12', revenue: '883.769M', netProfit: '40.769M', margin: '4.61%', eps: '0.04', qoq: '+5.59%', yoy: '+58.62%' },
+        { period: '2013-12', revenue: '753.068M', netProfit: '37.539M', margin: '4.98%', eps: '0.04', qoq: '-6.04%', yoy: '+29.70%' },
+        { period: '2015-09', revenue: '904.086M', netProfit: '50.924M', margin: '5.63%', eps: '0.05', qoq: '+24.52%', yoy: '+51.65%' },
         { period: '2007-03', revenue: '1020.109M', netProfit: '34.420M', margin: '3.37%', eps: '0.04', qoq: '+16.59%', yoy: '+3.21%' },
-        { period: '2014-09', revenue: '986.418M',  netProfit: '47.523M', margin: '4.82%', eps: '0.04', qoq: '-14.16%', yoy: '+56.27%' },
-        { period: '2010-09', revenue: '731.708M',  netProfit: '38.948M', margin: '5.32%', eps: '0.04', qoq: '+16.60%', yoy: '+25.18%' },
-        { period: '2005-12', revenue: '905.134M',  netProfit: '51.021M', margin: '5.64%', eps: '0.05', qoq: '-6.09%',  yoy: '+23.40%' },
-        { period: '2013-09', revenue: '930.713M',  netProfit: '37.313M', margin: '4.01%', eps: '0.03', qoq: '+1.83%',  yoy: '+50.95%' },
-        { period: '2020-03', revenue: '813.101M',  netProfit: '34.668M', margin: '4.26%', eps: '0.03', qoq: '+4.55%',  yoy: '+41.08%' },
-        { period: '2001-09', revenue: '891.551M',  netProfit: '43.543M', margin: '4.88%', eps: '0.05', qoq: '+16.55%', yoy: '+42.59%' },
+        { period: '2014-09', revenue: '986.418M', netProfit: '47.523M', margin: '4.82%', eps: '0.04', qoq: '-14.16%', yoy: '+56.27%' },
+        { period: '2010-09', revenue: '731.708M', netProfit: '38.948M', margin: '5.32%', eps: '0.04', qoq: '+16.60%', yoy: '+25.18%' },
+        { period: '2005-12', revenue: '905.134M', netProfit: '51.021M', margin: '5.64%', eps: '0.05', qoq: '-6.09%', yoy: '+23.40%' },
+        { period: '2013-09', revenue: '930.713M', netProfit: '37.313M', margin: '4.01%', eps: '0.03', qoq: '+1.83%', yoy: '+50.95%' },
+        { period: '2020-03', revenue: '813.101M', netProfit: '34.668M', margin: '4.26%', eps: '0.03', qoq: '+4.55%', yoy: '+41.08%' },
+        { period: '2001-09', revenue: '891.551M', netProfit: '43.543M', margin: '4.88%', eps: '0.05', qoq: '+16.55%', yoy: '+42.59%' },
         { period: '2017-12', revenue: '1011.470M', netProfit: '45.190M', margin: '4.47%', eps: '0.05', qoq: '-12.83%', yoy: '+17.09%' },
-        { period: '2013-06', revenue: '970.820M',  netProfit: '36.535M', margin: '3.76%', eps: '0.04', qoq: '+8.89%',  yoy: '-2.90%' },
-        { period: '2023-09', revenue: '924.374M',  netProfit: '37.791M', margin: '4.09%', eps: '0.04', qoq: '+21.65%', yoy: '+43.19%' },
-        { period: '2003-06', revenue: '933.547M',  netProfit: '37.353M', margin: '4.00%', eps: '0.04', qoq: '+6.76%',  yoy: '+43.01%' },
-        { period: '2011-03', revenue: '994.343M',  netProfit: '48.121M', margin: '4.84%', eps: '0.04', qoq: '+11.81%', yoy: '+24.91%' },
-        { period: '2019-12', revenue: '927.524M',  netProfit: '55.499M', margin: '5.98%', eps: '0.06', qoq: '+22.66%', yoy: '+37.36%' },
-        { period: '2020-09', revenue: '749.782M',  netProfit: '47.742M', margin: '6.37%', eps: '0.04', qoq: '-12.13%', yoy: '+32.91%' },
-        { period: '2025-03', revenue: '972.274M',  netProfit: '48.341M', margin: '4.97%', eps: '0.04', qoq: '+17.21%', yoy: '+40.11%' },
-        { period: '2009-06', revenue: '889.774M',  netProfit: '53.331M', margin: '5.99%', eps: '0.06', qoq: '-7.85%',  yoy: '+19.92%' },
+        { period: '2013-06', revenue: '970.820M', netProfit: '36.535M', margin: '3.76%', eps: '0.04', qoq: '+8.89%', yoy: '-2.90%' },
+        { period: '2023-09', revenue: '924.374M', netProfit: '37.791M', margin: '4.09%', eps: '0.04', qoq: '+21.65%', yoy: '+43.19%' },
+        { period: '2003-06', revenue: '933.547M', netProfit: '37.353M', margin: '4.00%', eps: '0.04', qoq: '+6.76%', yoy: '+43.01%' },
+        { period: '2011-03', revenue: '994.343M', netProfit: '48.121M', margin: '4.84%', eps: '0.04', qoq: '+11.81%', yoy: '+24.91%' },
+        { period: '2019-12', revenue: '927.524M', netProfit: '55.499M', margin: '5.98%', eps: '0.06', qoq: '+22.66%', yoy: '+37.36%' },
+        { period: '2020-09', revenue: '749.782M', netProfit: '47.742M', margin: '6.37%', eps: '0.04', qoq: '-12.13%', yoy: '+32.91%' },
+        { period: '2025-03', revenue: '972.274M', netProfit: '48.341M', margin: '4.97%', eps: '0.04', qoq: '+17.21%', yoy: '+40.11%' },
+        { period: '2009-06', revenue: '889.774M', netProfit: '53.331M', margin: '5.99%', eps: '0.06', qoq: '-7.85%', yoy: '+19.92%' },
         { period: '2009-09', revenue: '1035.780M', netProfit: '49.197M', margin: '4.75%', eps: '0.05', qoq: '-11.69%', yoy: '+0.08%' },
-        { period: '2002-03', revenue: '984.053M',  netProfit: '49.252M', margin: '5.00%', eps: '0.04', qoq: '+13.28%', yoy: '+53.00%' },
-        { period: '2018-09', revenue: '857.558M',  netProfit: '44.276M', margin: '5.16%', eps: '0.04', qoq: '-5.63%',  yoy: '+41.80%' },
-        { period: '2016-06', revenue: '804.787M',  netProfit: '51.796M', margin: '6.44%', eps: '0.05', qoq: '+1.07%',  yoy: '+27.65%' },
-        { period: '2022-09', revenue: '1027.221M', netProfit: '45.118M', margin: '4.39%', eps: '0.04', qoq: '+3.92%',  yoy: '+51.17%' },
-        { period: '2013-03', revenue: '846.807M',  netProfit: '34.806M', margin: '4.11%', eps: '0.03', qoq: '+13.30%', yoy: '+2.90%' },
+        { period: '2002-03', revenue: '984.053M', netProfit: '49.252M', margin: '5.00%', eps: '0.04', qoq: '+13.28%', yoy: '+53.00%' },
+        { period: '2018-09', revenue: '857.558M', netProfit: '44.276M', margin: '5.16%', eps: '0.04', qoq: '-5.63%', yoy: '+41.80%' },
+        { period: '2016-06', revenue: '804.787M', netProfit: '51.796M', margin: '6.44%', eps: '0.05', qoq: '+1.07%', yoy: '+27.65%' },
+        { period: '2022-09', revenue: '1027.221M', netProfit: '45.118M', margin: '4.39%', eps: '0.04', qoq: '+3.92%', yoy: '+51.17%' },
+        { period: '2013-03', revenue: '846.807M', netProfit: '34.806M', margin: '4.11%', eps: '0.03', qoq: '+13.30%', yoy: '+2.90%' },
         { period: '2022-03', revenue: '1055.023M', netProfit: '34.774M', margin: '3.30%', eps: '0.03', qoq: '+12.89%', yoy: '-12.51%' },
-        { period: '2001-06', revenue: '722.543M',  netProfit: '51.814M', margin: '7.17%', eps: '0.06', qoq: '+10.07%', yoy: '+42.32%' },
-        { period: '2022-06', revenue: '820.699M',  netProfit: '45.689M', margin: '5.57%', eps: '0.05', qoq: '+20.64%', yoy: '+11.23%' },
-        { period: '2010-12', revenue: '744.415M',  netProfit: '45.361M', margin: '6.09%', eps: '0.04', qoq: '-5.98%',  yoy: '+17.58%' },
-        { period: '2015-12', revenue: '828.929M',  netProfit: '47.365M', margin: '5.71%', eps: '0.04', qoq: '-5.14%',  yoy: '-13.42%' },
-        { period: '2012-06', revenue: '991.254M',  netProfit: '43.423M', margin: '4.38%', eps: '0.04', qoq: '+18.13%', yoy: '+10.72%' },
-        { period: '2022-12', revenue: '861.302M',  netProfit: '52.405M', margin: '6.08%', eps: '0.05', qoq: '+20.59%', yoy: '-13.63%' },
-        { period: '2011-06', revenue: '779.429M',  netProfit: '54.697M', margin: '7.02%', eps: '0.06', qoq: '+17.73%', yoy: '+47.70%' },
-        { period: '2007-09', revenue: '825.989M',  netProfit: '42.459M', margin: '5.14%', eps: '0.03', qoq: '-10.04%', yoy: '-16.66%' },
-        { period: '2003-12', revenue: '759.654M',  netProfit: '42.818M', margin: '5.64%', eps: '0.04', qoq: '-7.79%',  yoy: '-11.18%' },
-        { period: '2021-12', revenue: '908.628M',  netProfit: '50.049M', margin: '5.51%', eps: '0.04', qoq: '+18.18%', yoy: '+11.31%' },
-        { period: '2019-06', revenue: '852.410M',  netProfit: '42.775M', margin: '5.02%', eps: '0.05', qoq: '-8.52%',  yoy: '+5.03%' },
-        { period: '2025-09', revenue: '941.606M',  netProfit: '39.036M', margin: '4.15%', eps: '0.04', qoq: '+6.24%',  yoy: '+26.41%' },
-        { period: '2015-03', revenue: '872.654M',  netProfit: '47.115M', margin: '5.40%', eps: '0.04', qoq: '-9.32%',  yoy: '+31.96%' },
-        { period: '2021-09', revenue: '1017.824M', netProfit: '50.805M', margin: '4.99%', eps: '0.05', qoq: '-1.24%',  yoy: '+51.57%' },
-        { period: '2015-06', revenue: '752.529M',  netProfit: '38.261M', margin: '5.08%', eps: '0.03', qoq: '+8.01%',  yoy: '+9.43%' },
+        { period: '2001-06', revenue: '722.543M', netProfit: '51.814M', margin: '7.17%', eps: '0.06', qoq: '+10.07%', yoy: '+42.32%' },
+        { period: '2022-06', revenue: '820.699M', netProfit: '45.689M', margin: '5.57%', eps: '0.05', qoq: '+20.64%', yoy: '+11.23%' },
+        { period: '2010-12', revenue: '744.415M', netProfit: '45.361M', margin: '6.09%', eps: '0.04', qoq: '-5.98%', yoy: '+17.58%' },
+        { period: '2015-12', revenue: '828.929M', netProfit: '47.365M', margin: '5.71%', eps: '0.04', qoq: '-5.14%', yoy: '-13.42%' },
+        { period: '2012-06', revenue: '991.254M', netProfit: '43.423M', margin: '4.38%', eps: '0.04', qoq: '+18.13%', yoy: '+10.72%' },
+        { period: '2022-12', revenue: '861.302M', netProfit: '52.405M', margin: '6.08%', eps: '0.05', qoq: '+20.59%', yoy: '-13.63%' },
+        { period: '2011-06', revenue: '779.429M', netProfit: '54.697M', margin: '7.02%', eps: '0.06', qoq: '+17.73%', yoy: '+47.70%' },
+        { period: '2007-09', revenue: '825.989M', netProfit: '42.459M', margin: '5.14%', eps: '0.03', qoq: '-10.04%', yoy: '-16.66%' },
+        { period: '2003-12', revenue: '759.654M', netProfit: '42.818M', margin: '5.64%', eps: '0.04', qoq: '-7.79%', yoy: '-11.18%' },
+        { period: '2021-12', revenue: '908.628M', netProfit: '50.049M', margin: '5.51%', eps: '0.04', qoq: '+18.18%', yoy: '+11.31%' },
+        { period: '2019-06', revenue: '852.410M', netProfit: '42.775M', margin: '5.02%', eps: '0.05', qoq: '-8.52%', yoy: '+5.03%' },
+        { period: '2025-09', revenue: '941.606M', netProfit: '39.036M', margin: '4.15%', eps: '0.04', qoq: '+6.24%', yoy: '+26.41%' },
+        { period: '2015-03', revenue: '872.654M', netProfit: '47.115M', margin: '5.40%', eps: '0.04', qoq: '-9.32%', yoy: '+31.96%' },
+        { period: '2021-09', revenue: '1017.824M', netProfit: '50.805M', margin: '4.99%', eps: '0.05', qoq: '-1.24%', yoy: '+51.57%' },
+        { period: '2015-06', revenue: '752.529M', netProfit: '38.261M', margin: '5.08%', eps: '0.03', qoq: '+8.01%', yoy: '+9.43%' },
     ],
     'SUNMED': [
         { period: '2009-03', revenue: '377.819M', netProfit: '80.387M', margin: '21.28%', eps: '0.07', qoq: '+7.49%', yoy: '+19.64%' },
@@ -938,191 +935,164 @@ const FINANCIAL_DATA: Record<string, { period: string; revenue: string; netProfi
         { period: '2011-03', revenue: '17561.510M', netProfit: '1152.198M', margin: '6.56%', eps: '1.25', qoq: '+22.43%', yoy: '-19.67%' },
     ],
 };
-const PAGE_SIZE = 10;
+const PS = 10;
+
+const css = `
+    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap');
+    * { font-family: 'Nunito', sans-serif !important; }
+    .dp-bg {
+        min-height: 100vh;
+        background:
+            radial-gradient(ellipse at 15% 25%, rgba(220,60,0,0.35) 0%, transparent 40%),
+            radial-gradient(ellipse at 75% 15%, rgba(180,0,0,0.4)   0%, transparent 35%),
+            radial-gradient(ellipse at 55% 60%, rgba(200,20,0,0.3)  0%, transparent 45%),
+            radial-gradient(ellipse at 85% 80%, rgba(140,0,0,0.5)   0%, transparent 40%),
+            linear-gradient(160deg, #4a0000 0%, #2d0000 30%, #1a0000 55%, #380000 75%, #1a0000 100%);
+    }
+    .dp-header {
+        background:
+            radial-gradient(ellipse at 0% 50%, rgba(180,30,0,0.4) 0%, transparent 60%),
+            linear-gradient(90deg, #1a0000 0%, #3d0000 40%, #2a0000 70%, #1a0000 100%);
+        border-bottom: 1px solid rgba(255,215,0,0.4);
+        padding: 0 20px;
+    }
+    .dp-pill {
+        background: rgba(120,0,0,0.5);
+        border: 1px solid rgba(200,30,0,0.7);
+        border-radius: 8px; padding: 6px 16px;
+        display: flex; gap: 8px; align-items: center; white-space: nowrap; font-size: 14px;
+    }
+    .dp-table-wrap {
+        overflow-x: auto; border-radius: 14px;
+        border: 1px solid rgba(200,30,0,0.8);
+        background: rgba(60,0,0,0.5);
+        backdrop-filter: blur(4px);
+    }
+    .dp-pgbtn {
+        border-radius: 6px; padding: 5px 12px;
+        font-weight: 900; font-size: 14px; cursor: pointer; transition: 0.15s;
+        font-family: 'Nunito', sans-serif;
+    }
+    .dp-pgbtn:not(:disabled) { background:#ffd700; color:#3d0000; border:1px solid #ffd700; }
+    .dp-pgbtn:disabled { background:rgba(120,0,0,0.4); color:rgba(255,215,0,0.3); border:1px solid rgba(200,30,0,0.4); cursor:default; }
+`;
 
 function StockDetail() {
-    const params = useSearchParams();
-    const router = useRouter();
+    const p = useSearchParams(), router = useRouter();
     const [page, setPage] = useState(1);
 
-    const name    = params.get('name')    ?? '-';
-    const price   = params.get('price')   ?? '-';
-    const nta     = params.get('nta')     ?? '-';
-    const percent = params.get('percent') ?? '-';
-    const chg     = params.get('chg')     ?? '-';
-    const open    = params.get('open')    ?? '-';
-    const high    = params.get('high')    ?? '-';
-    const low     = params.get('low')     ?? '-';
-    const change  = params.get('change')  ?? '-';
-    const last    = params.get('last')    ?? '-';
-    const vol     = params.get('vol')     ?? '-';
+    const name    = p.get('name')    ?? '-';
+    const price   = p.get('price')   ?? '-';
+    const nta     = p.get('nta')     ?? '-';
+    const percent = p.get('percent') ?? '-';
+    const chg     = p.get('chg')     ?? '-';
+    const open    = p.get('open')    ?? '-';
+    const high    = p.get('high')    ?? '-';
+    const low     = p.get('low')     ?? '-';
+    const change  = p.get('change')  ?? '-';
+    const last    = p.get('last')    ?? '-';
+    const vol     = p.get('vol')     ?? '-';
 
-    const meta       = STOCK_META[name] ?? FALLBACK_META;
-    const isNeg      = percent.startsWith('-');
-    const accent     = isNeg ? GOLD : GOLD;   // all gold
-    const accentBg   = isNeg ? 'rgba(255,215,0,0.15)' : 'rgba(255,215,0,0.15)';
+    const meta = STOCK_META[name] ?? FM;
+    const rows = FINANCIAL_DATA[name] ?? [];
+    const total = rows.length;
+    const totalPages = Math.max(1, Math.ceil(total / PS));
+    const pageRows = rows.slice((page - 1) * PS, page * PS);
 
-    const allRows    = FINANCIAL_DATA[name] ?? [];
-    const total      = allRows.length;
-    const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-    const pageRows   = allRows.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+    const G = '#ffd700', G2 = '#cc9900';
 
-    const pill = (label: string, value: string) => (
-        <div key={label} style={{
-            background: 'rgba(255,215,0,0.12)', border: '1px solid rgba(255,215,0,0.6)',
-            borderRadius: 8, padding: '6px 16px', fontSize: 14,
-            whiteSpace: 'nowrap', display: 'flex', gap: 8, alignItems: 'center',
-        }}>
-            <span style={{ color: GOLD2, fontWeight: 700 }}>{label}</span>
-            <span style={{ color: GOLD, fontWeight: 900 }}>{value}</span>
+    const pill = (lbl: string, val: string) => (
+        <div key={lbl} className="dp-pill">
+            <span style={{ color: G2, fontWeight: 700 }}>{lbl}</span>
+            <span style={{ color: G, fontWeight: 900 }}>{val}</span>
         </div>
     );
 
     const thS: React.CSSProperties = {
-        color: GOLD, fontSize: 13, fontWeight: 800,
-        padding: '12px 14px', borderBottom: '2px solid rgba(255,215,0,0.5)',
-        background: 'rgba(0,0,0,0.25)', whiteSpace: 'nowrap', textAlign: 'left',
+        color: G, fontSize: 13, fontWeight: 800, padding: '12px 14px',
+        borderBottom: '1px solid rgba(200,30,0,0.8)',
+        background: 'rgba(0,0,0,0.3)', whiteSpace: 'nowrap',
     };
     const tdS: React.CSSProperties = {
-        color: GOLD, fontSize: 14, fontWeight: 700,
-        padding: '11px 14px', borderBottom: '1px solid rgba(255,215,0,0.1)',
+        color: G, fontSize: 14, fontWeight: 700, padding: '11px 14px',
+        borderBottom: '1px solid rgba(150,20,0,0.4)',
     };
 
-    const PgBtn = ({ label, disabled, onClick }: { label: string; disabled: boolean; onClick: () => void }) => (
-        <button onClick={onClick} disabled={disabled} style={{
-            background: disabled ? 'rgba(255,215,0,0.1)' : GOLD,
-            color: disabled ? 'rgba(255,215,0,0.4)' : '#8b0000',
-            border: `1px solid rgba(255,215,0,${disabled ? 0.3 : 0.9})`,
-            borderRadius: 6, padding: '5px 12px',
-            cursor: disabled ? 'default' : 'pointer',
-            fontWeight: 900, fontSize: 14, transition: '0.15s',
-        }}>{label}</button>
-    );
-
-    const pageBg = `
-        radial-gradient(ellipse at 20% 30%, rgba(255,80,0,0.55) 0%, transparent 55%),
-        radial-gradient(ellipse at 80% 10%, rgba(255,0,80,0.4) 0%, transparent 50%),
-        radial-gradient(ellipse at 60% 80%, rgba(200,0,0,0.5) 0%, transparent 50%),
-        radial-gradient(ellipse at 10% 80%, rgba(255,50,0,0.35) 0%, transparent 45%),
-        linear-gradient(135deg, #cc0000 0%, #ff2200 30%, #dd0000 60%, #bb0000 100%)
-    `;
-
-    const headerBg = `
-        radial-gradient(ellipse at 0% 50%, rgba(255,80,0,0.3) 0%, transparent 50%),
-        radial-gradient(ellipse at 100% 50%, rgba(180,0,0,0.4) 0%, transparent 50%),
-        linear-gradient(90deg, #880000 0%, #bb0000 50%, #880000 100%)
-    `;
-
     return (
-        <div style={{ minHeight: '100vh', background: pageBg }}>
+        <div className="dp-bg">
+            <style>{css}</style>
 
-            {/* ── Header ── */}
-            <div style={{ background: headerBg, borderBottom: '3px solid #ffd700', padding: '0 20px' }}>
-                <div style={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    flexWrap: 'wrap', gap: '8px 16px', padding: '16px 0 10px',
-                }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap', minWidth: 0 }}>
-                        <button onClick={() => router.back()} style={{
-                            background: 'none', border: 'none', color: GOLD,
-                            fontSize: 32, cursor: 'pointer', padding: 0, lineHeight: 1,
-                        }}>‹</button>
-                        <span style={{ fontSize: 30, fontWeight: 900, color: GOLD, letterSpacing: 1 }}>{name}</span>
-                        <span style={{ fontSize: 17, fontWeight: 800, color: GOLD }}>{meta.code}</span>
-                        <span style={{
-                            fontSize: 13, fontWeight: 900, color: '#8b0000',
-                            background: GOLD, borderRadius: 6, padding: '3px 12px',
-                        }}>{meta.market}</span>
+            {/* Header */}
+            <div className="dp-header">
+                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:'8px 16px', padding:'16px 0 10px' }}>
+                    <div style={{ display:'flex', alignItems:'center', gap:14, flexWrap:'wrap' }}>
+                        <button onClick={() => router.back()} style={{ background:'none', border:'none', color:G, fontSize:32, cursor:'pointer', padding:0, lineHeight:1 }}>‹</button>
+                        <span style={{ fontSize:30, fontWeight:900, color:G, letterSpacing:1 }}>{name}</span>
+                        <span style={{ fontSize:16, fontWeight:800, color:G }}>{meta.code}</span>
+                        <span style={{ fontSize:13, fontWeight:900, color:'#3d0000', background:G, borderRadius:6, padding:'3px 12px' }}>{meta.market}</span>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexShrink: 0 }}>
-                        <span style={{ fontSize: 38, fontWeight: 900, color: GOLD, letterSpacing: -1 }}>{price}</span>
-                        <div style={{
-                            background: accentBg, border: `2px solid ${accent}`,
-                            borderRadius: 10, padding: '8px 18px', textAlign: 'center', minWidth: 80,
-                        }}>
-                            <div style={{ fontSize: 17, fontWeight: 900, color: GOLD, lineHeight: 1.4 }}>{chg}</div>
-                            <div style={{ fontSize: 13, fontWeight: 700, color: GOLD, lineHeight: 1.4 }}>{percent}</div>
+                    <div style={{ display:'flex', alignItems:'center', gap:16, flexShrink:0 }}>
+                        <span style={{ fontSize:38, fontWeight:900, color:G, letterSpacing:-1 }}>{price}</span>
+                        <div style={{ background:'rgba(120,0,0,0.5)', border:`1px solid rgba(255,215,0,0.6)`, borderRadius:10, padding:'8px 18px', textAlign:'center', minWidth:80 }}>
+                            <div style={{ fontSize:17, fontWeight:900, color:G, lineHeight:1.4 }}>{chg}</div>
+                            <div style={{ fontSize:13, fontWeight:700, color:G, lineHeight:1.4 }}>{percent}</div>
                         </div>
                     </div>
                 </div>
-
-                <div style={{ fontSize: 13, color: GOLD, fontWeight: 700, paddingBottom: 10, paddingLeft: 46 }}>{meta.sector}</div>
-
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, paddingBottom: 16 }}>
-                    {pill('Vol', vol)} {pill('MCap', meta.mcap)}
-                    {pill('P/E', meta.pe)} {pill('DY', meta.dy)} {pill('NTA', nta)}
+                <div style={{ fontSize:13, color:G2, fontWeight:700, paddingBottom:10, paddingLeft:46 }}>{meta.sector}</div>
+                <div style={{ display:'flex', flexWrap:'wrap', gap:8, paddingBottom:16 }}>
+                    {pill('Vol',vol)} {pill('MCap',meta.mcap)} {pill('P/E',meta.pe)} {pill('DY',meta.dy)} {pill('NTA',nta)}
                 </div>
             </div>
 
-            {/* ── Quick stats ── */}
-            <div style={{
-                background: 'rgba(0,0,0,0.2)',
-                borderBottom: '1px solid rgba(255,215,0,0.3)',
-                padding: '14px 20px',
-            }}>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 28 }}>
-                    {[
-                        ['Open', open], ['High', high], ['Low', low],
-                        ['Last', last], ['Change', change],
-                    ].map(([label, value]) => (
-                        <div key={label}>
-                            <div style={{ fontSize: 12, color: GOLD2, fontWeight: 700, marginBottom: 3 }}>{label}</div>
-                            <div style={{ fontSize: 18, fontWeight: 900, color: GOLD }}>{value}</div>
+            {/* Quick stats */}
+            <div style={{ background:'rgba(0,0,0,0.25)', borderBottom:'1px solid rgba(150,20,0,0.5)', padding:'14px 20px' }}>
+                <div style={{ display:'flex', flexWrap:'wrap', gap:28 }}>
+                    {[['Open',open],['High',high],['Low',low],['Last',last],['Change',change]].map(([lbl,val]) => (
+                        <div key={lbl}>
+                            <div style={{ fontSize:12, color:G2, fontWeight:700, marginBottom:3 }}>{lbl}</div>
+                            <div style={{ fontSize:18, fontWeight:900, color:G }}>{val}</div>
                         </div>
                     ))}
                 </div>
             </div>
 
-            {/* ── Financial Table ── */}
-            <div style={{ padding: '24px 20px' }}>
+            {/* Table */}
+            <div style={{ padding:'24px 20px' }}>
                 {total === 0 ? (
-                    <div style={{ color: GOLD, textAlign: 'center', padding: 40, fontSize: 16, fontWeight: 700 }}>
-                        No financial data for {name}.
-                    </div>
+                    <div style={{ color:G, textAlign:'center', padding:40, fontSize:16, fontWeight:700 }}>No data for {name}.</div>
                 ) : (
-                    <div style={{
-                        overflowX: 'auto', borderRadius: 12,
-                        border: '2px solid rgba(255,215,0,0.7)',
-                        background: 'rgba(0,0,0,0.25)',
-                        backdropFilter: 'blur(2px)',
-                    }}>
-                        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 600 }}>
+                    <div className="dp-table-wrap">
+                        <table style={{ width:'100%', borderCollapse:'collapse', minWidth:600 }}>
                             <thead>
                                 <tr>
-                                    {['Period','Revenue','Net Profit','Profit Margin','EPS','QoQ %','YoY %'].map((h, i) => (
-                                        <th key={h} style={{ ...thS, textAlign: i === 0 ? 'left' : 'right' }}>{h}</th>
+                                    {['Period','Revenue','Net Profit','Profit Margin','EPS','QoQ %','YoY %'].map((h,i) => (
+                                        <th key={h} style={{ ...thS, textAlign: i===0?'left':'right' }}>{h}</th>
                                     ))}
                                 </tr>
                             </thead>
                             <tbody>
                                 {pageRows.map((row, i) => (
-                                    <tr key={i} style={{ background: i % 2 === 0 ? 'transparent' : 'rgba(0,0,0,0.12)' }}>
-                                        <td style={{ ...tdS }}>{row.period}</td>
-                                        <td style={{ ...tdS, textAlign: 'right' }}>{row.revenue}</td>
-                                        <td style={{ ...tdS, textAlign: 'right' }}>{row.netProfit}</td>
-                                        <td style={{ ...tdS, textAlign: 'right' }}>{row.margin}</td>
-                                        <td style={{ ...tdS, textAlign: 'right' }}>{row.eps}</td>
-                                        <td style={{ ...tdS, textAlign: 'right' }}>{row.qoq}</td>
-                                        <td style={{ ...tdS, textAlign: 'right' }}>{row.yoy}</td>
+                                    <tr key={i} style={{ background: i%2===0 ? 'rgba(0,0,0,0.1)' : 'rgba(80,0,0,0.2)' }}>
+                                        <td style={tdS}>{row.period}</td>
+                                        <td style={{ ...tdS, textAlign:'right' }}>{row.revenue}</td>
+                                        <td style={{ ...tdS, textAlign:'right' }}>{row.netProfit}</td>
+                                        <td style={{ ...tdS, textAlign:'right' }}>{row.margin}</td>
+                                        <td style={{ ...tdS, textAlign:'right' }}>{row.eps}</td>
+                                        <td style={{ ...tdS, textAlign:'right' }}>{row.qoq}</td>
+                                        <td style={{ ...tdS, textAlign:'right' }}>{row.yoy}</td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
-
-                        <div style={{
-                            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                            padding: '14px 18px', borderTop: '1px solid rgba(255,215,0,0.4)',
-                            flexWrap: 'wrap', gap: 8,
-                        }}>
-                            <span style={{ color: GOLD, fontSize: 14, fontWeight: 700 }}>{total} records</span>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                <PgBtn label="««" disabled={page === 1}          onClick={() => setPage(1)} />
-                                <PgBtn label="‹"  disabled={page === 1}          onClick={() => setPage(p => p - 1)} />
-                                <span style={{ color: GOLD, fontSize: 15, fontWeight: 900, padding: '0 12px' }}>
-                                    {page} / {totalPages}
-                                </span>
-                                <PgBtn label="›"  disabled={page === totalPages} onClick={() => setPage(p => p + 1)} />
-                                <PgBtn label="»»" disabled={page === totalPages} onClick={() => setPage(totalPages)} />
+                        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'14px 18px', borderTop:'1px solid rgba(200,30,0,0.6)', flexWrap:'wrap', gap:8 }}>
+                            <span style={{ color:G, fontSize:14, fontWeight:700 }}>{total} records</span>
+                            <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+                                <button className="dp-pgbtn" disabled={page===1}          onClick={()=>setPage(1)}>««</button>
+                                <button className="dp-pgbtn" disabled={page===1}          onClick={()=>setPage(pg=>pg-1)}>‹</button>
+                                <span style={{ color:G, fontSize:15, fontWeight:900, padding:'0 12px' }}>{page} / {totalPages}</span>
+                                <button className="dp-pgbtn" disabled={page===totalPages} onClick={()=>setPage(pg=>pg+1)}>›</button>
+                                <button className="dp-pgbtn" disabled={page===totalPages} onClick={()=>setPage(totalPages)}>»»</button>
                             </div>
                         </div>
                     </div>
