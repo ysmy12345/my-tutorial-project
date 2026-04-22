@@ -1,17 +1,22 @@
 "use client";
+import React, { useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Suspense, useState } from 'react';
+import { Suspense } from 'react';
+import {
+    ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid,
+    Tooltip, Legend, ResponsiveContainer, LabelList,
+} from 'recharts';
 
 const STOCK_META: Record<string, { code: string; market: string; sector: string; mcap: string; pe: string; dy: string }> = {
     '5ER':    { code: '0397', market: 'Main Market', sector: 'Others › Others',                                 mcap: 'RM 400.40M', pe: '30.18', dy: '-'     },
     'AAX':    { code: '5238', market: 'Main Market', sector: 'Industrials › Passenger Transportation Services', mcap: 'RM 4.27B',   pe: '22.26', dy: '-'     },
     'SUNMED': { code: '5555', market: 'Main Market', sector: 'Healthcare › Healthcare Providers & Services',    mcap: 'RM 21.28B',  pe: '47.33', dy: '-'     },
-    'ZETRIX': { code: '0138', market: 'Main Market', sector: 'Technology › Software & IT Services',            mcap: 'RM 6.53B',   pe: '7.38',  dy: '3.38%' },
-    'IOIPG':  { code: '5249', market: 'Main Market', sector: 'Others › Others',                                mcap: 'RM 21.42B',  pe: '9.42',  dy: '2.06%' },
-    'CIMB':   { code: '1023', market: 'Main Market', sector: 'Finance › Banking Services',                     mcap: 'RM 80.05B',  pe: '10.19', dy: '6.36%' },
-    'GAMUDA': { code: '5398', market: 'Main Market', sector: 'Industrials › Construction & Engineering',       mcap: 'RM 25.20B',  pe: '24.61', dy: '2.36%' },
-    'PBBANK': { code: '1295', market: 'Main Market', sector: 'Finance › Banking Services',                     mcap: 'RM 90.45B',  pe: '12.52', dy: '4.83%' },
-    'TENAGA': { code: '5347', market: 'Main Market', sector: 'Utilities › Electrical Utilities & IPPs',        mcap: 'RM 83.12B',  pe: '17.43', dy: '3.72%' },
+    'ZETRIX': { code: '0138', market: 'Main Market', sector: 'Technology › Software & IT Services',             mcap: 'RM 6.53B',   pe: '7.38',  dy: '3.38%' },
+    'IOIPG':  { code: '5249', market: 'Main Market', sector: 'Others › Others',                                 mcap: 'RM 21.42B',  pe: '9.42',  dy: '2.06%' },
+    'CIMB':   { code: '1023', market: 'Main Market', sector: 'Finance › Banking Services',                      mcap: 'RM 80.05B',  pe: '10.19', dy: '6.36%' },
+    'GAMUDA': { code: '5398', market: 'Main Market', sector: 'Industrials › Construction & Engineering',        mcap: 'RM 25.20B',  pe: '24.61', dy: '2.36%' },
+    'PBBANK': { code: '1295', market: 'Main Market', sector: 'Finance › Banking Services',                      mcap: 'RM 90.45B',  pe: '12.52', dy: '4.83%' },
+    'TENAGA': { code: '5347', market: 'Main Market', sector: 'Utilities › Electrical Utilities & IPPs',         mcap: 'RM 83.12B',  pe: '17.43', dy: '3.72%' },
 };
 const FM = { code: '-', market: '-', sector: '-', mcap: '-', pe: '-', dy: '-' };
 
@@ -975,11 +980,30 @@ const css = `
     }
     .dp-pgbtn:not(:disabled) { background:#ffd700; color:#3d0000; border:1px solid #ffd700; }
     .dp-pgbtn:disabled { background:rgba(120,0,0,0.4); color:rgba(255,215,0,0.3); border:1px solid rgba(200,30,0,0.4); cursor:default; }
+    .dp-chart-wrap {
+        background: rgba(60,0,0,0.45);
+        border: 1px solid rgba(200,30,0,0.8);
+        border-radius: 14px;
+        padding: 20px 8px 20px 0;
+        backdrop-filter: blur(4px);
+        margin-bottom: 28px;
+    }
+    .dp-tab-btn {
+        border-radius: 8px; padding: 7px 22px;
+        font-weight: 900; font-size: 14px; cursor: pointer;
+        border: 1px solid rgba(255,215,0,0.5);
+        font-family: 'Nunito', sans-serif; transition: 0.15s;
+    }
+    .dp-tab-btn.active { background:#ffd700; color:#3d0000; border-color:#ffd700; }
+    .dp-tab-btn:not(.active) { background:rgba(120,0,0,0.4); color:#ffd700; }
+    .recharts-cartesian-grid-horizontal line,
+    .recharts-cartesian-grid-vertical line { stroke: rgba(200,30,0,0.25); }
 `;
 
 function StockDetail() {
     const p = useSearchParams(), router = useRouter();
     const [page, setPage] = useState(1);
+    const [chartTab, setChartTab] = useState<'quarterly'|'yearly'>('quarterly');
 
     const name    = p.get('name')    ?? '-';
     const price   = p.get('price')   ?? '-';
@@ -1018,6 +1042,69 @@ function StockDetail() {
         borderBottom: '1px solid rgba(150,20,0,0.4)',
     };
 
+    // ── Chart data ─────────────────────────────────────────────────────
+    const parseVal = (s: string) => parseFloat(s.replace(/[^0-9.-]/g, '')) || 0;
+
+    // Sort all rows by period ascending
+    const sortedRows = [...rows].sort((a, b) => a.period.localeCompare(b.period));
+
+    const quarterlyChart = sortedRows.slice(-10).map(r => ({
+        period: r.period,
+        Revenue:      parseVal(r.revenue),
+        NetProfit:    parseVal(r.netProfit),
+        ProfitMargin: parseFloat(r.margin) || 0,
+        revLabel: r.revenue,
+        npLabel:  r.netProfit,
+        pmLabel:  r.margin,
+    }));
+
+    // Yearly: group by year, sum revenue & netProfit, avg margin
+    const yearMap: Record<string, { rev: number; np: number; margins: number[]; periods: string[] }> = {};
+    sortedRows.forEach(r => {
+        const yr = r.period.split('-')[0];
+        if (!yearMap[yr]) yearMap[yr] = { rev: 0, np: 0, margins: [], periods: [] };
+        yearMap[yr].rev += parseVal(r.revenue);
+        yearMap[yr].np  += parseVal(r.netProfit);
+        yearMap[yr].margins.push(parseFloat(r.margin) || 0);
+        yearMap[yr].periods.push(r.period);
+    });
+    const yearlyChart = Object.entries(yearMap).slice(-8).map(([yr, d]) => {
+        const avgMargin = d.margins.reduce((a,b) => a+b, 0) / d.margins.length;
+        const fmtM = (v: number) => v >= 1000 ? `${(v/1000).toFixed(3)}B` : `${v.toFixed(3)}M`;
+        return {
+            period: yr,
+            Revenue:      d.rev,
+            NetProfit:    d.np,
+            ProfitMargin: parseFloat(avgMargin.toFixed(2)),
+            revLabel: fmtM(d.rev),
+            npLabel:  fmtM(d.np),
+            pmLabel:  `${avgMargin.toFixed(2)}%`,
+        };
+    });
+
+    const chartData = chartTab === 'quarterly' ? quarterlyChart : yearlyChart;
+
+    const fmtAxis = (v: number) => {
+        if (v === 0) return '0.000K';
+        if (v >= 1_000_000) return `${(v/1_000_000).toFixed(3)}T`;
+        if (v >= 1_000)     return `${(v/1_000).toFixed(3)}B`;
+        return `${v.toFixed(3)}M`;
+    };
+
+    const CustomTooltip = ({ active, payload, label }: any) => {
+        if (!active || !payload?.length) return null;
+        return (
+            <div style={{ background:'rgba(30,0,0,0.95)', border:'1px solid rgba(255,215,0,0.5)', borderRadius:10, padding:'10px 16px', fontSize:13 }}>
+                <div style={{ color:'#ffd700', fontWeight:900, marginBottom:6 }}>{label}</div>
+                {payload.map((entry: any) => (
+                    <div key={entry.name} style={{ color: entry.color, fontWeight:800, marginBottom:2 }}>
+                        {entry.name}: {entry.name === 'ProfitMargin' ? `${entry.value}%` : fmtAxis(entry.value)}
+                    </div>
+                ))}
+            </div>
+        );
+    };
+
     return (
         <div className="dp-bg">
             <style>{css}</style>
@@ -1031,6 +1118,7 @@ function StockDetail() {
                         <span style={{ fontSize:16, fontWeight:800, color:G }}>{meta.code}</span>
                         <span style={{ fontSize:13, fontWeight:900, color:'#3d0000', background:G, borderRadius:6, padding:'3px 12px' }}>{meta.market}</span>
                     </div>
+
                     <div style={{ display:'flex', alignItems:'center', gap:16, flexShrink:0 }}>
                         <span style={{ fontSize:38, fontWeight:900, color:G, letterSpacing:-1 }}>{price}</span>
                         <div style={{ background:'rgba(120,0,0,0.5)', border:`1px solid rgba(255,215,0,0.6)`, borderRadius:10, padding:'8px 18px', textAlign:'center', minWidth:80 }}>
@@ -1039,6 +1127,7 @@ function StockDetail() {
                         </div>
                     </div>
                 </div>
+                
                 <div style={{ fontSize:13, color:G2, fontWeight:700, paddingBottom:10, paddingLeft:46 }}>{meta.sector}</div>
                 <div style={{ display:'flex', flexWrap:'wrap', gap:8, paddingBottom:16 }}>
                     {pill('Vol',vol)} {pill('MCap',meta.mcap)} {pill('P/E',meta.pe)} {pill('DY',meta.dy)} {pill('NTA',nta)}
@@ -1055,6 +1144,51 @@ function StockDetail() {
                         </div>
                     ))}
                 </div>
+            </div>
+
+            {/* Financial Performance Chart */}
+            <div style={{ padding:'24px 20px 0' }}>
+                <div style={{ color:G, fontWeight:900, fontSize:17, marginBottom:14 }}>Financial Performance</div>
+                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:10, marginBottom:16 }}>
+                    <div style={{ display:'flex', gap:8 }}>
+                        <button className={`dp-tab-btn${chartTab==='quarterly'?' active':''}`} onClick={()=>setChartTab('quarterly')}>Quarterly</button>
+                        <button className={`dp-tab-btn${chartTab==='yearly'?' active':''}`}    onClick={()=>setChartTab('yearly')}>Yearly</button>
+                    </div>
+
+                    <div style={{ display:'flex', gap:18, alignItems:'center', fontSize:13, fontWeight:800 }}>
+                        <span style={{ display:'flex', alignItems:'center', gap:6 }}><span style={{ width:12, height:12, borderRadius:2, background:'#4e9af1', display:'inline-block' }}/><span style={{ color:'#ccc' }}>Revenue</span></span>
+                        <span style={{ display:'flex', alignItems:'center', gap:6 }}><span style={{ width:12, height:12, borderRadius:2, background:'#2ecc71', display:'inline-block' }}/><span style={{ color:'#ccc' }}>Net Profit</span></span>
+                        <span style={{ display:'flex', alignItems:'center', gap:6 }}><span style={{ width:12, height:12, borderRadius:'50%', background:'#f5a623', display:'inline-block' }}/><span style={{ color:'#ccc' }}>Profit Margin</span></span>
+                    </div>
+                </div>
+
+                {chartData.length === 0 ? (
+                    <div style={{ color:G, textAlign:'center', padding:40, fontSize:15, fontWeight:700 }}>No chart data for {name}.</div>
+                ) : (
+                    <div className="dp-chart-wrap">
+                        <ResponsiveContainer width="100%" height={380}>
+                            <ComposedChart data={chartData} margin={{ top:30, right:55, left:10, bottom:10 }}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(200,30,0,0.2)" />
+                                <XAxis dataKey="period" tick={{ fill:'#cc9900', fontSize:12, fontWeight:700 }} axisLine={{ stroke:'rgba(200,30,0,0.5)' }} tickLine={false} />
+                                <YAxis yAxisId="left"  tickFormatter={fmtAxis} tick={{ fill:'#cc9900', fontSize:11, fontWeight:700 }} axisLine={false} tickLine={false} width={72} />
+                                <YAxis yAxisId="right" orientation="right" tickFormatter={(v)=>`${v}%`} tick={{ fill:'#f5a623', fontSize:11, fontWeight:700 }} axisLine={false} tickLine={false} width={50} domain={[0, 'auto']} />
+                                <Tooltip content={<CustomTooltip />} />
+
+                                <Bar yAxisId="left" dataKey="Revenue"   fill="#4e9af1" radius={[3,3,0,0]} maxBarSize={40}>
+                                    <LabelList dataKey="revLabel" position="top" style={{ fill:'#4e9af1', fontSize:10, fontWeight:800 }} />
+                                </Bar>
+
+                                <Bar yAxisId="left" dataKey="NetProfit" fill="#2ecc71" radius={[3,3,0,0]} maxBarSize={40}>
+                                    <LabelList dataKey="npLabel" position="top" style={{ fill:'#2ecc71', fontSize:10, fontWeight:800 }} />
+                                </Bar>
+
+                                <Line yAxisId="right" type="monotone" dataKey="ProfitMargin" stroke="#f5a623" strokeWidth={2.5} dot={{ fill:'#f5a623', r:4, strokeWidth:0 }}>
+                                    <LabelList dataKey="pmLabel" position="top" style={{ fill:'#f5a623', fontSize:10, fontWeight:800 }} />
+                                </Line>
+                            </ComposedChart>
+                        </ResponsiveContainer>
+                    </div>
+                )}
             </div>
 
             {/* Table */}
@@ -1085,6 +1219,7 @@ function StockDetail() {
                                 ))}
                             </tbody>
                         </table>
+
                         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'14px 18px', borderTop:'1px solid rgba(200,30,0,0.6)', flexWrap:'wrap', gap:8 }}>
                             <span style={{ color:G, fontSize:14, fontWeight:700 }}>{total} records</span>
                             <div style={{ display:'flex', alignItems:'center', gap:8 }}>

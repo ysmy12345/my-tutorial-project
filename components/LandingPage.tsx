@@ -145,6 +145,7 @@ const Header = () => {
                             }}>
                                 <img src="https://api.dicebear.com/7.x/bottts/svg?seed=wuchang" alt="Logo" width={28} />
                             </Center>
+                            
                             <Stack gap={0} visibleFrom="xs">
                                 <Text fw={900} size="xl" style={{ color: '#ffd700', letterSpacing: 0.5 }}>WuChang 無常</Text>
                                 <Text size="11px" fw={700} style={{ color: '#cc9900' }}>THE NO.1 AI FINANCIAL PLATFORM</Text>
@@ -222,12 +223,14 @@ const StockCard = ({ item, onClick }: { item: Stock; onClick: () => void }) => (
         <Group align="center" wrap="nowrap" gap="md">
             {/* Left: name */}
             <Text fw={900} size="lg" style={{ color: '#ffd700', letterSpacing: 0.5, minWidth: 80 }}>{item.name}</Text>
+
             {/* Middle: Open / High / Low */}
             <Stack gap={2} style={{ flex: 1 }}>
                 <Group gap={6}><Text fw={700} size="sm" style={{ color: '#cc9900', minWidth: 38 }}>Open</Text><Text fw={800} size="sm" style={{ color: '#ffd700' }}>{item.open}</Text></Group>
                 <Group gap={6}><Text fw={700} size="sm" style={{ color: '#cc9900', minWidth: 38 }}>High</Text><Text fw={800} size="sm" style={{ color: '#ffd700' }}>{item.high}</Text></Group>
                 <Group gap={6}><Text fw={700} size="sm" style={{ color: '#cc9900', minWidth: 38 }}>Low</Text><Text fw={800} size="sm" style={{ color: '#ffd700' }}>{item.low}</Text></Group>
             </Stack>
+
             {/* Right: Change / Last / Vol */}
             <Stack gap={2} style={{ flex: 1 }}>
                 <Group gap={6}><Text fw={700} size="sm" style={{ color: '#cc9900', minWidth: 50 }}>Change</Text><Text fw={800} size="sm" style={{ color: '#ffd700' }}>{item.change}</Text></Group>
@@ -259,23 +262,26 @@ const StockModal = ({ stock, onClose, onView }: {
                     border: '2px solid rgba(255,215,0,0.7)',
                 },
                 body: { padding: '28px 24px 24px' },
-            }}
-        >
+            }}>
+
             <Text fw={900} ta="center" mb="lg" style={{ color: '#ffd700', fontSize: 30, letterSpacing: 2 }}>
                 {stock.name}
             </Text>
+
             <SimpleGrid cols={2} spacing="md" mb="xl">
                 <Stack gap={10}>
                     {row('Open',  stock.open)}
                     {row('High',  stock.high)}
                     {row('Low',   stock.low)}
                 </Stack>
+
                 <Stack gap={10}>
                     {row('Change', stock.change)}
                     {row('Last',   stock.last)}
                     {row('Vol',    stock.vol)}
                 </Stack>
             </SimpleGrid>
+
             <Group justify="center" gap="lg">
                 <Button fw={900} size="md" px="xl" radius="xl"
                     style={{ background: '#ffd700', color: '#3d0000', border: 'none', minWidth: 110, fontSize: 16 }}
