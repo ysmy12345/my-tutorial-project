@@ -6,21 +6,30 @@ import { useRouter } from 'next/navigation';
 import { TrendingUp, Coins, BarChart3, Bot, Zap, Sparkles, Building2, ChevronDown } from 'lucide-react';
 import { getStockList } from '../utils/api';
 
-// ── Palette: deep jewel red like the screenshot ──────────────────
-// bg:      #1a0000 → #3d0000 → #6b0000  (dark star-dust red)
-// card:    rgba(180,0,0,0.45) semi-transparent
-// border:  #cc2200 (dim red border on card) + #ffd700 (gold accent)
+// ── 调色: deep jewel red ──
+// bg:      #6b0000  (dark star-dust red)
+// card:    rgba(180,0,0,0.45) 半透明
+// border:  #cc2200 (card 边缘是暗红色) + #ffd700 (gold accent)
 // text:    #ffd700 all
 
 interface Stock {
-    name: string; price: string; nta: string;
-    percent: string; chg: string;
-    open: string; high: string; low: string;
-    change: string; last: string; vol: string;
+    name: string; 
+    price: string; 
+    nta: string;
+    percent: string; 
+    chg: string;
+    open: string; 
+    high: string; 
+    low: string;
+    change: string; 
+    last: string; 
+    vol: string;
 }
 
+// table title
 const TABLE_CONFIG = ['Top Volume', 'Top Turnover', 'Top Loses'];
 
+// 最上面的header
 const NAV_LINKS = [
     { label: '馬來西亞股市', subLabel: 'KLSE Stock Market', Icon: TrendingUp, active: true },
     { label: '加密貨幣',     subLabel: 'Cryptocurrency',    Icon: Coins },
@@ -31,12 +40,13 @@ const NAV_LINKS = [
     { label: '房地產',       subLabel: 'Property',          Icon: Building2 },
 ];
 
+// design
 const G = () => (
     <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap');
         * { font-family: 'Nunito', sans-serif !important; }
 
-        /* Deep jewel-red star-dust background — matches screenshot exactly */
+        /* Deep jewel-red star-dust background */
         .page-bg {
             min-height: 100vh;
             background:
@@ -49,14 +59,14 @@ const G = () => (
                 linear-gradient(160deg, #4a0000 0%, #2d0000 30%, #1a0000 55%, #380000 75%, #1a0000 100%);
         }
 
-        /* Texture overlay — canvas handled via JS */
+        /* 叠加 Texture — canvas handled via JS */
         .page-bg > * { position: relative; z-index: 1; }
         .star-canvas {
             position: fixed; inset: 0; z-index: 0;
             pointer-events: none; width: 100%; height: 100%;
         }
 
-        /* Navbar: dark red, subtle */
+        /* Navbar: dark red, 低调 */
         .nav-bg {
             background:
                 radial-gradient(ellipse at 0% 50%, rgba(180,30,0,0.4) 0%, transparent 60%),
@@ -65,7 +75,7 @@ const G = () => (
             position: sticky; top: 0; z-index: 1000;
         }
 
-        /* Card: semi-transparent deep red with red border like screenshot */
+        /* Card: semi-transparent deep red with red border */
         .stock-card {
             background:
                 radial-gradient(ellipse at 80% 30%, rgba(200,40,0,0.2) 0%, transparent 60%),
@@ -136,6 +146,7 @@ const Header = () => {
                 <Container size="xl" h={rem(70)}>
                     <Group justify="space-between" h="100%" wrap="nowrap">
 
+                        {/* wuchang profile & title */}
                         <Group gap="sm" wrap="nowrap">
                             <Center style={{
                                 borderRadius: '50%', width: 44, height: 44,
@@ -152,6 +163,7 @@ const Header = () => {
                             </Stack>
                         </Group>
 
+                        {/* 不同的title category label 是for click data 来看,暂时没有function */}
                         <Group gap={rem(2)} visibleFrom="md" wrap="nowrap">
                             {NAV_LINKS.map(link => (
                                 <UnstyledButton key={link.label} className="nav-btn" style={{
@@ -173,6 +185,7 @@ const Header = () => {
                             ))}
                         </Group>
 
+                        {/* login button */}
                         <Group gap="md">
                             <Button fw={900} size="md" px="xl" style={{
                                 background: '#ffd700', color: '#5a0000',
@@ -195,8 +208,7 @@ const Header = () => {
                         borderBottom: '1px solid rgba(255,215,0,0.4)',
                     },
                     title: { color: '#ffd700', fontWeight: 900, fontSize: 20 },
-                }}
-            >
+                }}>
                 <Stack gap="xs">
                     {NAV_LINKS.map(link => (
                         <UnstyledButton key={link.label} className="drawer-item" p="md">
@@ -282,6 +294,7 @@ const StockModal = ({ stock, onClose, onView }: {
                 </Stack>
             </SimpleGrid>
 
+            {/* pop up */}
             <Group justify="center" gap="lg">
                 <Button fw={900} size="md" px="xl" radius="xl"
                     style={{ background: '#ffd700', color: '#3d0000', border: 'none', minWidth: 110, fontSize: 16 }}
@@ -441,10 +454,17 @@ export const LandingPage = () => {
     const handleView = () => {
         if (!selected) return;
         router.push(`/stock/${selected.name}?${new URLSearchParams({
-            name: selected.name, price: selected.price, nta: selected.nta,
-            percent: selected.percent, chg: selected.chg, open: selected.open,
-            high: selected.high, low: selected.low, change: selected.change,
-            last: selected.last, vol: selected.vol,
+            name: selected.name, 
+            price: selected.price, 
+            nta: selected.nta,
+            percent: selected.percent, 
+            chg: selected.chg, 
+            open: selected.open,
+            high: selected.high, 
+            low: selected.low, 
+            change: selected.change,
+            last: selected.last, 
+            vol: selected.vol,
         })}`);
     };
 
