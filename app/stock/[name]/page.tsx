@@ -2,10 +2,7 @@
 import React, { useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Suspense } from 'react';
-import {
-    ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid,
-    Tooltip, Legend, ResponsiveContainer, LabelList,
-} from 'recharts';
+import { ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList, } from 'recharts';
 
 const STOCK_META: Record<string, { code: string; market: string; sector: string; mcap: string; pe: string; dy: string }> = {
     '5ER':    { code: '0397', market: 'Main Market', sector: 'Others › Others',                                 mcap: 'RM 400.40M', pe: '30.18', dy: '-'     },
@@ -954,6 +951,7 @@ const css = `
             radial-gradient(ellipse at 85% 80%, rgba(140,0,0,0.5)   0%, transparent 40%),
             linear-gradient(160deg, #4a0000 0%, #2d0000 30%, #1a0000 55%, #380000 75%, #1a0000 100%);
     }
+
     .dp-header {
         background:
             radial-gradient(ellipse at 0% 50%, rgba(180,30,0,0.4) 0%, transparent 60%),
@@ -961,25 +959,40 @@ const css = `
         border-bottom: 1px solid rgba(255,215,0,0.4);
         padding: 0 20px;
     }
+
     .dp-pill {
         background: rgba(120,0,0,0.5);
         border: 1px solid rgba(200,30,0,0.7);
         border-radius: 8px; padding: 6px 16px;
         display: flex; gap: 8px; align-items: center; white-space: nowrap; font-size: 14px;
     }
+
     .dp-table-wrap {
         overflow-x: auto; border-radius: 14px;
         border: 1px solid rgba(200,30,0,0.8);
         background: rgba(60,0,0,0.5);
         backdrop-filter: blur(4px);
     }
+
     .dp-pgbtn {
         border-radius: 6px; padding: 5px 12px;
         font-weight: 900; font-size: 14px; cursor: pointer; transition: 0.15s;
         font-family: 'Nunito', sans-serif;
     }
-    .dp-pgbtn:not(:disabled) { background:#ffd700; color:#3d0000; border:1px solid #ffd700; }
-    .dp-pgbtn:disabled { background:rgba(120,0,0,0.4); color:rgba(255,215,0,0.3); border:1px solid rgba(200,30,0,0.4); cursor:default; }
+
+    .dp-pgbtn:not(:disabled) { 
+        background:#ffd700; 
+        color:#3d0000; 
+        border:1px solid #ffd700; 
+    }
+
+    .dp-pgbtn:disabled { 
+        background:rgba(120,0,0,0.4); 
+        color:rgba(255,215,0,0.3); 
+        border:1px solid rgba(200,30,0,0.4); 
+        cursor:default; 
+    }
+
     .dp-chart-wrap {
         background: rgba(60,0,0,0.45);
         border: 1px solid rgba(200,30,0,0.8);
@@ -988,16 +1001,43 @@ const css = `
         backdrop-filter: blur(4px);
         margin-bottom: 28px;
     }
+
     .dp-tab-btn {
         border-radius: 8px; padding: 7px 22px;
         font-weight: 900; font-size: 14px; cursor: pointer;
         border: 1px solid rgba(255,215,0,0.5);
         font-family: 'Nunito', sans-serif; transition: 0.15s;
     }
+
     .dp-tab-btn.active { background:#ffd700; color:#3d0000; border-color:#ffd700; }
     .dp-tab-btn:not(.active) { background:rgba(120,0,0,0.4); color:#ffd700; }
     .recharts-cartesian-grid-horizontal line,
     .recharts-cartesian-grid-vertical line { stroke: rgba(200,30,0,0.25); }
+
+    /* ── Page 2 Animations ── */
+    @keyframes dp-fadeUp   { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes dp-fadeIn   { from { opacity:0; } to { opacity:1; } }
+    @keyframes dp-scaleIn  { from { opacity:0; transform:scaleY(0.88); } to { opacity:1; transform:scaleY(1); } }
+    @keyframes dp-slideRight { from { opacity:0; transform:translateX(-20px); } to { opacity:1; transform:translateX(0); } }
+    @keyframes dp-pillPop  { from { opacity:0; transform:scale(0.82); } to { opacity:1; transform:scale(1); } }
+
+    /* Header section fades up */
+    .dp-header-anim  { animation: dp-fadeUp 0.5s ease both; }
+
+    /* Stats row items pop in staggered */
+    .dp-stat-anim    { animation: dp-fadeUp 0.45s ease both; }
+
+    /* Pill badges pop */
+    .dp-pill-anim    { animation: dp-pillPop 0.4s cubic-bezier(.22,.68,0,1.3) both; }
+
+    /* Chart slides up */
+    .dp-chart-anim   { animation: dp-scaleIn 0.55s ease both; animation-delay: 0.2s; }
+
+    /* Table fades in */
+    .dp-table-anim   { animation: dp-fadeUp 0.45s ease both; animation-delay: 0.50s; }
+
+    /* Table rows stagger */
+    .dp-row-anim     { animation: dp-slideRight 0.38s ease both; }
 `;
 
 function StockDetail() {
@@ -1033,16 +1073,24 @@ function StockDetail() {
     );
 
     const thS: React.CSSProperties = {
-        color: G, fontSize: 13, fontWeight: 800, padding: '12px 14px',
+        color: G, 
+        fontSize: 13, 
+        fontWeight: 800, 
+        padding: '12px 14px',
         borderBottom: '1px solid rgba(200,30,0,0.8)',
-        background: 'rgba(0,0,0,0.3)', whiteSpace: 'nowrap',
+        background: 'rgba(0,0,0,0.3)', 
+        whiteSpace: 'nowrap',
     };
+
     const tdS: React.CSSProperties = {
-        color: G, fontSize: 14, fontWeight: 700, padding: '11px 14px',
+        color: G, 
+        fontSize: 14, 
+        fontWeight: 700, 
+        padding: '11px 14px',
         borderBottom: '1px solid rgba(150,20,0,0.4)',
     };
 
-    // ── Chart data ─────────────────────────────────────────────────────
+    // ── Chart data ──
     const parseVal = (s: string) => parseFloat(s.replace(/[^0-9.-]/g, '')) || 0;
 
     // Sort all rows by period ascending
@@ -1110,7 +1158,7 @@ function StockDetail() {
             <style>{css}</style>
 
             {/* Header */}
-            <div className="dp-header">
+            <div className="dp-header dp-header-anim">
                 <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:'8px 16px', padding:'16px 0 10px' }}>
                     <div style={{ display:'flex', alignItems:'center', gap:14, flexWrap:'wrap' }}>
                         <button onClick={() => router.back()} style={{ background:'none', border:'none', color:G, fontSize:32, cursor:'pointer', padding:0, lineHeight:1 }}>‹</button>
@@ -1130,15 +1178,20 @@ function StockDetail() {
                 
                 <div style={{ fontSize:13, color:G2, fontWeight:700, paddingBottom:10, paddingLeft:46 }}>{meta.sector}</div>
                 <div style={{ display:'flex', flexWrap:'wrap', gap:8, paddingBottom:16 }}>
-                    {pill('Vol',vol)} {pill('MCap',meta.mcap)} {pill('P/E',meta.pe)} {pill('DY',meta.dy)} {pill('NTA',nta)}
+                    {[['Vol',vol],['MCap',meta.mcap],['P/E',meta.pe],['DY',meta.dy],['NTA',nta]].map(([lbl,val],pi) => (
+                        <div key={lbl} className="dp-pill dp-pill-anim" style={{animationDelay:`${0.05+pi*0.07}s`}}>
+                            <span style={{color:G2,fontWeight:700}}>{lbl}</span>
+                            <span style={{color:G,fontWeight:900}}>{val}</span>
+                        </div>
+                    ))}
                 </div>
             </div>
 
             {/* Quick stats */}
             <div style={{ background:'rgba(0,0,0,0.25)', borderBottom:'1px solid rgba(150,20,0,0.5)', padding:'14px 20px' }}>
                 <div style={{ display:'flex', flexWrap:'wrap', gap:28 }}>
-                    {[['Open',open],['High',high],['Low',low],['Last',last],['Change',change]].map(([lbl,val]) => (
-                        <div key={lbl}>
+                    {[['Open',open],['High',high],['Low',low],['Last',last],['Change',change]].map(([lbl,val],si) => (
+                        <div key={lbl} className="dp-stat-anim" style={{animationDelay:`${0.1+si*0.06}s`}}>
                             <div style={{ fontSize:12, color:G2, fontWeight:700, marginBottom:3 }}>{lbl}</div>
                             <div style={{ fontSize:18, fontWeight:900, color:G }}>{val}</div>
                         </div>
@@ -1147,7 +1200,7 @@ function StockDetail() {
             </div>
 
             {/* Financial Performance Chart */}
-            <div style={{ padding:'24px 20px 0' }}>
+            <div className="dp-chart-anim" style={{ padding:'24px 20px 0' }}>
                 <div style={{ color:G, fontWeight:900, fontSize:17, marginBottom:14 }}>Financial Performance</div>
                 <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:10, marginBottom:16 }}>
                     <div style={{ display:'flex', gap:8 }}>
@@ -1196,7 +1249,7 @@ function StockDetail() {
                 {total === 0 ? (
                     <div style={{ color:G, textAlign:'center', padding:40, fontSize:16, fontWeight:700 }}>No data for {name}.</div>
                 ) : (
-                    <div className="dp-table-wrap">
+                    <div className="dp-table-wrap dp-table-anim">
                         <table style={{ width:'100%', borderCollapse:'collapse', minWidth:600 }}>
                             <thead>
                                 <tr>
@@ -1205,9 +1258,11 @@ function StockDetail() {
                                     ))}
                                 </tr>
                             </thead>
+                            
                             <tbody>
                                 {pageRows.map((row, i) => (
-                                    <tr key={i} style={{ background: i%2===0 ? 'rgba(0,0,0,0.1)' : 'rgba(80,0,0,0.2)' }}>
+                                    <tr key={i} className="dp-row-anim"
+                                        style={{ background: i%2===0 ? 'rgba(0,0,0,0.1)' : 'rgba(80,0,0,0.2)', animationDelay:`${i*0.04}s` }}>
                                         <td style={tdS}>{row.period}</td>
                                         <td style={{ ...tdS, textAlign:'right' }}>{row.revenue}</td>
                                         <td style={{ ...tdS, textAlign:'right' }}>{row.netProfit}</td>
