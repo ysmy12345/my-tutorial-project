@@ -1015,29 +1015,29 @@ const css = `
     .recharts-cartesian-grid-vertical line { stroke: rgba(200,30,0,0.25); }
 
     /* ── Page 2 Animations ── */
-    @keyframes dp-fadeUp   { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
-    @keyframes dp-fadeIn   { from { opacity:0; } to { opacity:1; } }
-    @keyframes dp-scaleIn  { from { opacity:0; transform:scaleY(0.88); } to { opacity:1; transform:scaleY(1); } }
-    @keyframes dp-slideRight { from { opacity:0; transform:translateX(-20px); } to { opacity:1; transform:translateX(0); } }
-    @keyframes dp-pillPop  { from { opacity:0; transform:scale(0.82); } to { opacity:1; transform:scale(1); } }
+    @keyframes dp-fadeUp     { from { opacity:0; transform:translateY(32px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes dp-fadeIn     { from { opacity:0; } to { opacity:1; } }
+    @keyframes dp-scaleIn    { from { opacity:0; transform:scaleY(0.92); } to { opacity:1; transform:scaleY(1); } }
+    @keyframes dp-slideRight { from { opacity:0; transform:translateX(-32px); } to { opacity:1; transform:translateX(0); } }
+    @keyframes dp-pillPop    { from { opacity:0; transform:scale(0.85); } to { opacity:1; transform:scale(1); } }
 
     /* Header section fades up */
-    .dp-header-anim  { animation: dp-fadeUp 0.5s ease both; }
+    .dp-header-anim  { animation: dp-fadeUp 0.90s cubic-bezier(.22,.68,0,1.2) both; }
 
     /* Stats row items pop in staggered */
-    .dp-stat-anim    { animation: dp-fadeUp 0.45s ease both; }
+    .dp-stat-anim    { animation: dp-fadeUp 0.85s cubic-bezier(.22,.68,0,1.2) both; }
 
     /* Pill badges pop */
-    .dp-pill-anim    { animation: dp-pillPop 0.4s cubic-bezier(.22,.68,0,1.3) both; }
+    .dp-pill-anim    { animation: dp-pillPop 0.75s cubic-bezier(.22,.68,0,1.2) both; }
 
     /* Chart slides up */
-    .dp-chart-anim   { animation: dp-scaleIn 0.55s ease both; animation-delay: 0.2s; }
+    .dp-chart-anim   { animation: dp-scaleIn 0.90s cubic-bezier(.22,.68,0,1.2) both; animation-delay: 0.25s; }
 
     /* Table fades in */
-    .dp-table-anim   { animation: dp-fadeUp 0.45s ease both; animation-delay: 0.50s; }
+    .dp-table-anim   { animation: dp-fadeUp 0.90s cubic-bezier(.22,.68,0,1.2) both; animation-delay: 0.50s; }
 
     /* Table rows stagger */
-    .dp-row-anim     { animation: dp-slideRight 0.38s ease both; }
+    .dp-row-anim     { animation: dp-slideRight 0.75s cubic-bezier(.22,.68,0,1.2) both; }
 `;
 
 function StockDetail() {
@@ -1179,7 +1179,7 @@ function StockDetail() {
                 <div style={{ fontSize:13, color:G2, fontWeight:700, paddingBottom:10, paddingLeft:46 }}>{meta.sector}</div>
                 <div style={{ display:'flex', flexWrap:'wrap', gap:8, paddingBottom:16 }}>
                     {[['Vol',vol],['MCap',meta.mcap],['P/E',meta.pe],['DY',meta.dy],['NTA',nta]].map(([lbl,val],pi) => (
-                        <div key={lbl} className="dp-pill dp-pill-anim" style={{animationDelay:`${0.05+pi*0.07}s`}}>
+                        <div key={lbl} className="dp-pill dp-pill-anim" style={{animationDelay:`${0.15+pi*0.10}s`}}>
                             <span style={{color:G2,fontWeight:700}}>{lbl}</span>
                             <span style={{color:G,fontWeight:900}}>{val}</span>
                         </div>
@@ -1191,7 +1191,7 @@ function StockDetail() {
             <div style={{ background:'rgba(0,0,0,0.25)', borderBottom:'1px solid rgba(150,20,0,0.5)', padding:'14px 20px' }}>
                 <div style={{ display:'flex', flexWrap:'wrap', gap:28 }}>
                     {[['Open',open],['High',high],['Low',low],['Last',last],['Change',change]].map(([lbl,val],si) => (
-                        <div key={lbl} className="dp-stat-anim" style={{animationDelay:`${0.1+si*0.06}s`}}>
+                        <div key={lbl} className="dp-stat-anim" style={{animationDelay:`${0.25+si*0.08}s`}}>
                             <div style={{ fontSize:12, color:G2, fontWeight:700, marginBottom:3 }}>{lbl}</div>
                             <div style={{ fontSize:18, fontWeight:900, color:G }}>{val}</div>
                         </div>
@@ -1262,7 +1262,7 @@ function StockDetail() {
                             <tbody>
                                 {pageRows.map((row, i) => (
                                     <tr key={i} className="dp-row-anim"
-                                        style={{ background: i%2===0 ? 'rgba(0,0,0,0.1)' : 'rgba(80,0,0,0.2)', animationDelay:`${i*0.04}s` }}>
+                                        style={{ background: i%2===0 ? 'rgba(0,0,0,0.1)' : 'rgba(80,0,0,0.2)', animationDelay:`${0.60 + i * 0.08}s` }}>
                                         <td style={tdS}>{row.period}</td>
                                         <td style={{ ...tdS, textAlign:'right' }}>{row.revenue}</td>
                                         <td style={{ ...tdS, textAlign:'right' }}>{row.netProfit}</td>
