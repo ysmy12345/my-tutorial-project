@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Suspense } from 'react';
 import { ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList, } from 'recharts';
@@ -968,15 +968,20 @@ const css = `
     }
 
     .dp-table-wrap {
-        overflow-x: auto; border-radius: 14px;
+        overflow-x: auto; 
+        border-radius: 14px;
         border: 1px solid rgba(200,30,0,0.8);
         background: rgba(60,0,0,0.5);
         backdrop-filter: blur(4px);
     }
 
     .dp-pgbtn {
-        border-radius: 6px; padding: 5px 12px;
-        font-weight: 900; font-size: 14px; cursor: pointer; transition: 0.15s;
+        border-radius: 6px; 
+        padding: 5px 12px;
+        font-weight: 900; 
+        font-size: 14px; 
+        cursor: pointer; 
+        transition: 0.15s;
         font-family: 'Nunito', sans-serif;
     }
 
@@ -1003,8 +1008,11 @@ const css = `
     }
 
     .dp-tab-btn {
-        border-radius: 8px; padding: 7px 22px;
-        font-weight: 900; font-size: 14px; cursor: pointer;
+        border-radius: 8px; 
+        padding: 7px 22px;
+        font-weight: 900; 
+        font-size: 14px; 
+        cursor: pointer;
         border: 1px solid rgba(255,215,0,0.5);
         font-family: 'Nunito', sans-serif; transition: 0.15s;
     }
@@ -1038,12 +1046,98 @@ const css = `
 
     /* Table rows stagger */
     .dp-row-anim     { animation: dp-slideRight 0.75s cubic-bezier(.22,.68,0,1.2) both; }
+
+    /* ================================ */
+    /* ── Reproduced Slideshow CSS (Fused with existing design) ── */
+    .dp-slideshow {
+        position: relative; 
+        width: 100%; 
+        height: 420px; 
+        overflow: hidden; 
+        border-radius: 16px; 
+        border: 1px solid rgba(255,215,0,0.3);
+    }
+
+    .dp-slide-img {
+        position: absolute; 
+        width: 100%; 
+        height: 100%;
+        object-fit: cover; 
+        opacity: 0; transition: 
+        opacity 1s ease-in-out;
+    }
+
+    .dp-slide-img.active { opacity: 1; }
+
+    .dp-slide-content-box {
+        position: absolute; 
+        left: 40px; 
+        top: 50%;
+        transform: translateY(-50%); 
+        width: 450px;
+        background: rgba(30, 0, 0, 0.6);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        padding: 35px; 
+        border-radius: 12px;
+        border: 1px solid rgba(255, 215, 0, 0.2);
+        z-index: 10;
+    }
+
+    .dp-slide-title { 
+        font-size: 32px; 
+        font-weight: 900; 
+        color: #ffd700; 
+        margin-bottom: 12px; 
+        line-height: 1.2; 
+    }
+
+    .dp-slide-desc { 
+        font-size: 15px; 
+        color: rgba(255, 215, 0, 0.8); 
+        margin-bottom: 25px; 
+        font-weight: 600; 
+        line-height: 1.5; 
+    }
+    
+    /* 官网金色按钮 */
+    .dp-slide-btn {
+        background: #ffd700; color: #2a0000; padding: 10px 28px;
+        border-radius: 6px; font-weight: 900; font-size: 14px;
+        border: none; cursor: pointer; transition: transform 0.2s;
+    }
+    .dp-slide-btn:hover { transform: scale(1.05); }
+
+    .dp-slide-dots {
+        position: absolute; 
+        bottom: 20px; 
+        right: 40px; 
+        display: flex; 
+        gap: 10px;
+    }
+
+    .dp-slide-dot {
+        width: 12px; 
+        height: 12px; 
+        border-radius: 50%;
+        background: rgba(255,215,0,0.2); 
+        border: 1px solid #ffd700;
+        cursor: pointer; 
+        transition: 0.3s;
+    }
+    .dp-slide-dot.active { 
+        background: #ffd700; 
+        width: 30px; 
+        border-radius: 6px; 
+    }
+
 `;
 
 function StockDetail() {
     const p = useSearchParams(), router = useRouter();
     const [page, setPage] = useState(1);
     const [chartTab, setChartTab] = useState<'quarterly'|'yearly'>('quarterly');
+    const [currentSlide, setCurrentSlide] = useState(0);
 
     const name    = p.get('name')    ?? '-';
     const price   = p.get('price')   ?? '-';
@@ -1153,6 +1247,36 @@ function StockDetail() {
         );
     };
 
+    //=============================
+
+    const slides = [
+        { 
+            img: 'https://images.unsplash.com/photo-1611974786485-a41234976386?q=80&w=2070', 
+            title: '马来西亚第一 AI 智能金融平台', 
+            desc: `正在查看 ${name} (${meta.code})。利用我们的 AI 模型，精准掌握入场时机与技术支撑位。`,
+            btn: '立即开始分析'
+        },
+        { 
+            img: 'https://images.unsplash.com/photo-1642790103517-18129f552501?q=80&w=2070', 
+            title: 'Papaya Trade 自动交易系统', 
+            desc: '通过我们的智能机器人实现全自动交易，无需 24 小时紧盯盘面，让财富稳健增值。',
+            btn: '了解更多'
+        },
+        { 
+            img: 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?q=80&w=2070', 
+            title: '无常 AI 选股机器人', 
+            desc: '每日扫描全场数千只股票，通过深度学习筛选出具备爆发潜力的黑马股。',
+            btn: '查看选股列表'
+        }
+    ];
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrentSlide((prev) => (prev + 1) % slides.length);
+        }, 6000);
+        return () => clearInterval(timer);
+    }, [slides.length]);
+
     return (
         <div className="dp-bg">
             <style>{css}</style>
@@ -1196,6 +1320,33 @@ function StockDetail() {
                             <div style={{ fontSize:18, fontWeight:900, color:G }}>{val}</div>
                         </div>
                     ))}
+                </div>
+            </div>
+
+            <div className="dp-chart-anim" style={{ padding:'24px 20px 0' }}>
+                <div className="dp-slideshow">
+                    {/* 背景图片层 */}
+                    {slides.map((s, idx) => (
+                        <img key={idx} src={s.img} alt="" className={`dp-slide-img${idx === currentSlide ? ' active' : ''}`} />
+                    ))}
+                    
+                    {/* 官网风格浮动内容框 */}
+                    <div className="dp-slide-content-box dp-header-anim" key={`content-${currentSlide}`}>
+                        <div className="dp-slide-title">{slides[currentSlide].title}</div>
+                        <div className="dp-slide-desc">{slides[currentSlide].desc}</div>
+                        <button className="dp-slide-btn">{slides[currentSlide].btn}</button>
+                    </div>
+
+                    {/* 指示点 */}
+                    <div className="dp-slide-dots">
+                        {slides.map((_, idx) => (
+                            <div 
+                                key={idx} 
+                                className={`dp-slide-dot${idx === currentSlide ? ' active' : ''}`} 
+                                onClick={() => setCurrentSlide(idx)}
+                            />
+                        ))}
+                    </div>
                 </div>
             </div>
 
